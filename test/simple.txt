@@ -1,3 +1,20 @@
-jose whahaha
-jb whahaha
-new changes
+ORDER_START
+   PRICE mealCode = 2;
+
+   MENU (mealCode) {
+      FOOD 1 : 
+         SERVE "Burger Meal"
+         DONE;
+     
+      FOOD 2 : 
+         SERVE "Chicken Meal";
+         DONE;
+     
+      FOOD 3 : 
+         SERVE "Rice Meal";
+         DONE;
+      }
+      SOLDOUT :
+         SERVE "Meal not available";
+   }
+ORDER_END
