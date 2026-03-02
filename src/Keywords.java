@@ -44,10 +44,6 @@ public class Keywords {
     public static final String TK_FUNCTION     = "<function>";
     public static final String TK_RETURN       = "<return>";
 
-    // -------------------------------------------------------------------------
-    // The keyword map
-    // -------------------------------------------------------------------------
-
     private static final Map<String, String> KEYWORDS = new HashMap<>();
 
     static {
@@ -107,6 +103,7 @@ public static String lookup(String word) {
      public static Map<String, String> getAll() {
         return java.util.Collections.unmodifiableMap(KEYWORDS);
     }
+    
     public static String getTokenName(String word) {
     // Check keywords first
     String keyword = KEYWORDS.get(word);
