@@ -1,9 +1,10 @@
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Tester {
 
-    private static HashMap<String, String> symbolTable = new HashMap<>();
+    private static LinkedHashMap<String, String> symbolTable = new LinkedHashMap<>();
 
     public static void main(String[] args) {
 
