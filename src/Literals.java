@@ -5,12 +5,12 @@ public class Literals {
     // scan PRICE constants 
     public static Token scanNumber(ReadChar stream, int startCol) throws IOException {
         StringBuilder sb = new StringBuilder();
-        boolean hasDecimal = false; // Tracks if we've seen a decimal point yet
+        boolean hasDecimal = false; // checks if we see a decimal point yet
         
         // keeps reading digits and decimal points
         while (Character.isDigit(stream.currentChar) || stream.currentChar == '.') {
             if (stream.currentChar == '.') {
-                if (hasDecimal) break; // If we already have a decimal, stop. (e.g., 10.5.2 is invalid)
+                if (hasDecimal) break; // If we already have a decimal, stop. (10.5.2 is invalid)
                 hasDecimal = true;
             }
             sb.append((char) stream.currentChar);
@@ -21,7 +21,7 @@ public class Literals {
         
         // test rules (decimal should have numbers infront and behind)
         if (numStr.endsWith(".")) {
-            return new Token("<error>", numStr, "Invalid trailing decimal", stream.line, startCol);
+            return new Token("<error>", numStr, "Invalid decimal", stream.line, startCol);
         }
         
         // convert the string to a double value and return it as a <numlit> token

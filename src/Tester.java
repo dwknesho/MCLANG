@@ -1,46 +1,62 @@
 import java.io.IOException;
+import java.util.HashMap;
 
 public class Tester {
+
+    private static HashMap<String, String> symbolTable = new HashMap<>();
+
     public static void main(String[] args) {
-        // Path to your test file (relative to the project root)
-        String testFilePath = "test/simple.txt";
+
+        String filePath = "MCLANG/test/simple.txt"; 
+        Scanner scanner = new Scanner(filePath);
 
         try {
-            Scanner scanner = new Scanner(testFilePath);
-
-            System.out.println("Scanning file: " + testFilePath);
-            System.out.println("---------------------------------------------------------------------------");
-            System.out.printf("%-20s | %-15s | %-10s | %-5s | %-5s%n", 
-                              "TOKEN NAME", "LEXEME", "VALUE", "LINE", "COL");
-            System.out.println("---------------------------------------------------------------------------");
-
             Token token;
-            // Loop until we hit the EOF token 
-            while (true) {
+            do {
                 token = scanner.getNextToken();
                 
-                // Format the output using the public fields from the Token class
-                System.out.printf("%-20s | %-15s | %-10s | %-5d | %-5d%n", 
-                    token.tokenName, 
-                    token.lexeme, 
-                    (token.value == null ? "null" : token.value), 
-                    token.line, 
-                    token.col);
-
-                // Break the loop if the scanner returns the [EOF] token
-                if (token.tokenName.equals("[EOF]")) {
-                    break;
+                // 1. Error Handling Requirement: Print errors if found
+                if (token.tokenName.equals("<error>")) {
+                    System.out.println("\nLEXICAL ERROR at line " + token.line + 
+                                       ", col " + token.col + ": " + token.value + 
+                                       " ('" + token.lexeme + "')");
+                    continue; // Skip printing normal token formatting for errors
                 }
+
+                // 2. Identifier Requirement: Print lexeme and add to Symbol Table
+                if (token.tokenName.equals("<id>")) {
+                    // Check if the id is already in the symbol table, if not, add it
+                    if (!symbolTable.containsKey(token.lexeme)) {
+                        symbolTable.put(token.lexeme, "type: id"); 
+                    }
+                    System.out.print(" " + token.lexeme + " ");
+                } 
+                // 3. Constant Values Requirement: Print their actual values
+                else if (token.tokenName.equals("<numlit>") || token.tokenName.equals("<stringlit>")) {
+                    System.out.print(" " + token.value + " ");
+                } 
+                // 4. Reserved Words & Operators Requirement: Print token names
+                else {
+                    // Formatting logic to make the console output look cleaner
+                    if (token.tokenName.equals("[EOF]")) {
+                        System.out.println("\n[EOF]");
+                    } else if (token.tokenName.equals("<semi>") || token.tokenName.equals("<l_brace>") || token.tokenName.equals("<r_brace>")) {
+                        // Drop a new line after semicolons or brackets so it reads like code
+                        System.out.println(token.tokenName); 
+                    } else {
+                        System.out.print(token.tokenName + " ");
+                    }
+                }
+            } while (!token.tokenName.equals("[EOF]"));
+
+            // Print the final symbol table so the professor can verify it works
+            System.out.println("\nSymbol Table");
+            for (String key : symbolTable.keySet()) {
+                System.out.println("Identifier: " + key + " | Details: " + symbolTable.get(key));
             }
 
-            System.out.println("---------------------------------------------------------------------------");
-            System.out.println("Scan complete.");
-
         } catch (IOException e) {
-            System.err.println("Error reading the file: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Unexpected error during scanning: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error reading tokens: " + e.getMessage());
         }
     }
 }
