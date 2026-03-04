@@ -7,7 +7,7 @@ public class Tester {
 
     public static void main(String[] args) {
 
-        String filePath = "MCLANG/test/simple.txt"; 
+        String filePath = "C:\\\\Users\\\\mirai\\\\Documents\\\\compiler\\\\MCLANG\\\\test\\\\simple.txt"; 
         Scanner scanner = new Scanner(filePath);
 
         try {

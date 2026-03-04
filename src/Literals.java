@@ -7,6 +7,11 @@ public class Literals {
         StringBuilder sb = new StringBuilder();
         boolean hasDecimal = false; // checks if we see a decimal point yet
         
+        // test rules (decimal cant start with a dot)
+        if (stream.currentChar == '.') {
+        stream.advance(); // consume the '.'
+        return new Token("<error>", ".", "Invalid decimal", stream.line, startCol);
+    }
         // keeps reading digits and decimal points
         while (Character.isDigit(stream.currentChar) || stream.currentChar == '.') {
             if (stream.currentChar == '.') {
