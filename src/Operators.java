@@ -9,7 +9,6 @@ public class Operators {
 
         switch (c) {
 
-       
             case '+': {
                 stream.advance();
                 if (stream.currentChar == '+') {

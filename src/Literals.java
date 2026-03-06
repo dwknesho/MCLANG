@@ -36,32 +36,40 @@ public class Literals {
     // Scans RECIPE constants in double quotes
     public static Token scanString(ReadChar stream, int startCol) throws IOException {
         StringBuilder sb = new StringBuilder();
-        stream.advance(); // Skip the opening quote (")
-        
-        // keeps reading until we hit another quote, a newline, or the end of the file
+        int startLine = stream.line;
+        stream.advance(); // Skip opening "
+
         while (stream.currentChar != '"' && stream.currentChar != '\n' && stream.currentChar != -1) {
-            
-            // handles escape characters (like \n for newline)
             if (stream.currentChar == '\\') {
-                stream.advance(); 
+                stream.advance(); // peek at character after \
+                
                 if (stream.currentChar == 'n') sb.append('\n');
                 else if (stream.currentChar == 't') sb.append('\t');
                 else if (stream.currentChar == '"') sb.append('"');
                 else if (stream.currentChar == '\\') sb.append('\\');
-                else sb.append((char) stream.currentChar);
+                else {
+                    // --- RECOVERY LOGIC ---
+                    String badEscape = "\\" + (char)stream.currentChar;
+                    // Keep skipping until we find the end of this "bad string"
+                    while (stream.currentChar != '"' && stream.currentChar != '\n' && stream.currentChar != -1) {
+                        stream.advance();
+                    }
+                    if (stream.currentChar == '"') stream.advance(); // consume the closing quote
+                    
+                    return new Token("<error>", badEscape, "Invalid escape sequence", startLine, startCol);
+                }
             } else {
-                sb.append((char) stream.currentChar); // add normal characters
+                sb.append((char) stream.currentChar);
             }
             stream.advance();
         }
-        
-        // check if the string was properly closed with a quote
+
         if (stream.currentChar == '"') {
-            stream.advance(); // Skip the closing quote
-            return new Token("<stringlit>", "\"" + sb.toString() + "\"", sb.toString(), stream.line, startCol);
+            stream.advance(); 
+            String content = sb.toString();
+            return new Token("<stringlit>", "\"" + content + "\"", content, startLine, startCol);
         }
-        
-        // If it stopped because of a newline or EOF, throw an error
-        return new Token("<error>", sb.toString(), "Unclosed string", stream.line, startCol);
+
+        return new Token("<error>", sb.toString(), "Unclosed string", startLine, startCol);
     }
 }

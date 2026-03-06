@@ -5,6 +5,7 @@ public class Token {
     public Object value; //value for constants
     public int line; //line error
     public int col; //column error
+    public String errorMessage; //error message
 
     public Token(String tokenName, String lexeme, Object value, int line, int col) {
         this.tokenName = tokenName;
@@ -12,5 +13,14 @@ public class Token {
         this.value = value;
         this.line = line;
         this.col = col;
+    }
+
+    public Token(String tokenName, String lexeme, String errorMessage, int line, int col) {
+        this.tokenName = tokenName;
+        this.lexeme = lexeme;
+        this.errorMessage = errorMessage;
+        this.line = line;
+        this.col = col;
+        this.value = errorMessage;
     }
 }

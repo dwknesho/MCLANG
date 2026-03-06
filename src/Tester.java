@@ -1,15 +1,20 @@
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Tester {
 
     private static LinkedHashMap<String, String> symbolTable = new LinkedHashMap<>();
+    private static List<String> errorList = new ArrayList<>(); // To store error details
 
     public static void main(String[] args) {
-
-        String filePath = "C:\\\\Users\\\\mirai\\\\Documents\\\\compiler\\\\MCLANG\\\\test\\\\simple.txt"; 
+    
+        String filePath = "test/simple.txt";
         Scanner scanner = new Scanner(filePath);
+        int errorCounter = 0;
+
+        System.out.println("\n--------------Start--------------\n");
 
         try {
             Token token;
@@ -18,10 +23,15 @@ public class Tester {
                 
                 // 1. Error Handling Requirement: Print errors if found
                 if (token.tokenName.equals("<error>")) {
-                    System.out.println("\nLEXICAL ERROR at line " + token.line + 
-                                       ", col " + token.col + ": " + token.value + 
-                                       " ('" + token.lexeme + "')");
-                    continue; // Skip printing normal token formatting for errors
+                    errorCounter++;
+                    // Print the placeholder in the code output
+                    System.out.print("!!ERROR " + errorCounter + "!! ");
+                    
+                    // Save the detailed message for the list at the bottom
+                    String detail = "Error " + errorCounter + " [Line " + token.line + ", Col " + token.col + "]: " + 
+                                    token.errorMessage + " ('" + token.lexeme + "')";
+                    errorList.add(detail);
+                    continue;
                 }
 
                 // 2. Identifier Requirement: Print lexeme and add to Symbol Table
@@ -41,17 +51,28 @@ public class Tester {
                     // Formatting logic to make the console output look cleaner
                     if (token.tokenName.equals("[EOF]")) {
                         System.out.println("\n[EOF]");
-                    } else if (token.tokenName.equals("<semi>") || token.tokenName.equals("<l_brace>") || token.tokenName.equals("<r_brace>")) {
-                        // Drop a new line after semicolons or brackets so it reads like code
+                    } else if (token.tokenName.equals("<semi>") || 
+                            token.tokenName.equals("<l_brace>") || 
+                            token.tokenName.equals("<r_brace>") || 
+                            token.tokenName.equals("<start>") || 
+                            token.tokenName.equals("<end>")) {
+                            // Drop a new line after semicolons, brackets, start, or end
                         System.out.println(token.tokenName); 
-                    } else {
+                    } else {        
                         System.out.print(token.tokenName + " ");
                     }
                 }
             } while (!token.tokenName.equals("[EOF]"));
 
-            // Print the final symbol table so the professor can verify it works
-            System.out.println("\nSymbol Table");
+            if (!errorList.isEmpty()) {
+                System.out.println("\n--- LEXICAL ERRORS ---");
+                for (String error : errorList) {
+                    System.out.println(error);
+                }
+            }
+
+            // Print the final symbol table
+            System.out.println("\n--------------Symbol Table--------------\n");
             for (String key : symbolTable.keySet()) {
                 System.out.println("Identifier: " + key + " | Details: " + symbolTable.get(key));
             }
