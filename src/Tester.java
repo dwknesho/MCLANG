@@ -10,11 +10,11 @@ public class Tester {
 
     public static void main(String[] args) {
     
-        String filePath = "test/simple.txt";
+        String filePath = "C:\\\\\\\\Users\\\\\\\\mirai\\\\\\\\Documents\\\\\\\\compiler\\\\\\\\MCLANG\\\\\\\\test\\\\\\\\simple.txt";
         Scanner scanner = new Scanner(filePath);
         int errorCounter = 0;
 
-        System.out.println("\n--------------Start--------------\n");
+        System.out.println("\nStart\n");
 
         try {
             Token token;
@@ -44,7 +44,12 @@ public class Tester {
                 } 
                 // 3. Constant Values Requirement: Print their actual values
                 else if (token.tokenName.equals("<numlit>") || token.tokenName.equals("<stringlit>")) {
-                    System.out.print(" " + token.value + " ");
+                    Object val = token.value;
+if (val instanceof Double && ((Double) val) == Math.floor((Double) val)) {
+    System.out.print(" " + (int)(double)(Double) val + " ");
+} else {
+    System.out.print(" " + val + " ");
+}
                 } 
                 // 4. Reserved Words & Operators Requirement: Print token names
                 else {
@@ -65,14 +70,14 @@ public class Tester {
             } while (!token.tokenName.equals("[EOF]"));
 
             if (!errorList.isEmpty()) {
-                System.out.println("\n--- LEXICAL ERRORS ---");
+                System.out.println("\nLEXICAL ERRORS");
                 for (String error : errorList) {
                     System.out.println(error);
                 }
             }
 
             // Print the final symbol table
-            System.out.println("\n--------------Symbol Table--------------\n");
+            System.out.println("\nSymbol Table\n");
             for (String key : symbolTable.keySet()) {
                 System.out.println("Identifier: " + key + " | Details: " + symbolTable.get(key));
             }

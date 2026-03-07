@@ -92,23 +92,13 @@ public class Keywords {
 }
   
 
-public static String lookup(String word) {
-        return KEYWORDS.get(word);          // null when not found
-    }
 
-  public static boolean isKeyword(String word) {
-        return KEYWORDS.containsKey(word);
-    }
-
-     public static Map<String, String> getAll() {
-        return java.util.Collections.unmodifiableMap(KEYWORDS);
-    }
     
     public static String getTokenName(String word) {
     // Check keywords first
     String keyword = KEYWORDS.get(word);
     if (keyword != null) return keyword;
-
+     
     // Check if it's a valid identifier (must start with lowercase)
     if (word != null && !word.isEmpty() && Character.isLowerCase(word.charAt(0))) {
         return "<id>";

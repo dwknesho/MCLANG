@@ -26,7 +26,7 @@ public class Scanner {
             return new Token("[EOF]", "EOF", null, stream.line, stream.col);
         }
 
-        int currentCol = stream.col;
+        
         char c = (char) stream.currentChar;
 
         // If it starts with a letter, it must be an identifier or keyword
