@@ -1,0 +1,90 @@
+ORDER_START
+
+!* Void procedures (EMPTY), String operations, Escape sequences, Nested loops,
+Array expression indexing, Compound assignment operators, Modulo operations,
+Unary operators, Decrement,  Loop control (continue), Comparison operator 
+(!=), Exception handling with finally block *!
+
+    !! Void procedure - no YIELD
+    TASK EMPTY printBanner(RECIPE msg) {
+        SERVE msg;
+    }
+
+    PRICE scores[6];
+    PRICE total = 100;
+    PRICE result;
+    RECIPE firstName = "John";
+    RECIPE lastName = "Doe";
+    RECIPE fullName;
+
+    printBanner("Features Demo");
+
+    !! String concatenation with variables
+    fullName = firstName + " " + lastName;
+    SERVE "Student: ";
+    SERVE fullName;
+
+    !! All escape sequences: \", \\, \n, \t
+    SERVE "Path:\t\"C:\\Users\\Data\"\nEnd of path";
+
+    !! Nested loops with expression as array index
+    SERVE "\nFilling scores array...";
+    PREP (PRICE i = 0; i < 2; i++) {
+        PREP (PRICE j = 0; j < 3; j++) {
+            scores[i * 3 + j] = (i + 1) * 10 + j;  !! Expression as index
+            SERVE scores[i * 3 + j];
+        }
+    }
+
+    !! Compound assignment operators
+    total *= 3;   !! 100 * 3 = 300
+    total /= 2;   !! 300 / 2 = 150
+    total %= 40;  !! 150 % 40 = 30
+
+    SERVE "After operations: ";
+    SERVE total;
+
+    !! Unary operators
+    result = +total;  !! Unary plus
+    result = -total;  !! Unary minus (result = -30)
+    SERVE "Unary minus: ";
+    SERVE result;
+
+    !! Decrement and NEXT (continue)
+    SERVE "\nOdd numbers only:";
+    PRICE count = 10;
+    REFILL (count > 0) {
+        count--;  !! Decrement
+        
+        WANT (count % 2 == 0) {  !! Modulo to check even
+            NEXT;  !! Skip even numbers
+        }
+        
+        SERVE count;
+        
+        WANT (count <= 3) {
+            DONE;
+        }
+    }
+
+    !! Inequality operator
+    WANT (count != 0) {
+        SERVE "Count is not zero";
+    }
+
+    !! Exception with CLEAN (finally)
+    SERVE "\nTesting exception...";
+    CHECK {
+        WANT (total < 50) {
+            SPILL "Value too low";
+        }
+        SERVE "Success!";
+    } HANDLE (err) {
+        SERVE "Error caught!";
+    } CLEAN {
+        SERVE "Cleanup always runs";  !! Finally block
+    }
+
+    printBanner("Done");
+
+ORDER_END

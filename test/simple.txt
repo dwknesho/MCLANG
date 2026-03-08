@@ -1,6 +1,0 @@
-ORDER_START
-   RECIPE jb = "hello";
-   JOSE test = 2;
-   RECIPE Jb = 3;
-
-ORDER_END

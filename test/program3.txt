@@ -1,0 +1,71 @@
+ORDER_START
+
+!*declaration, do-while, nested conditionals, 
+logical operators, increment, and boolean flags *!
+
+    !! function to check how close the guess is
+    TASK RECIPE getHint(PRICE guess, PRICE target) {
+        PRICE diff;
+        diff = guess - target;
+
+        !! Handle negative diff using logical condition
+        WANT (diff < 0) {
+            diff = diff * -1;
+        }
+
+        WANT (diff == 0) {
+            YIELD "Correct!";
+        } SIDE (diff <= 5) {
+            YIELD "Very close!";
+        } SIDE (diff <= 15) {
+            YIELD "Getting warm...";
+        } ONLY {
+            YIELD "Way off!";
+        }
+    }
+
+    PRICE secretNumber = 42;
+    PRICE guess;
+    PRICE attempts = 0;
+    PRICE maxAttempts = 5;
+    QUALITY won = EXPIRED;
+    RECIPE hint;
+
+    SERVE "Number Guessing Game";
+    SERVE "Guess the number between 1 and 100.";
+    SERVE "You have 5 attempts.";
+
+    !! Do-while gives player at least one guess
+    STIR {
+        attempts++;
+
+        SERVE "Attempt ";
+        SERVE attempts;
+        SERVE " — Enter your guess: ";
+        ORDER guess;
+
+        hint = getHint(guess, secretNumber);
+        SERVE hint;
+
+        WANT (guess == secretNumber) {
+            won = FRESH;
+        } SIDE (guess < secretNumber) {
+            SERVE "Hint: guess higher.";
+        } ONLY {
+            SERVE "Hint: guess lower.";
+        }
+
+    } REFILL (won == EXPIRED && attempts < maxAttempts);
+
+    !! final result
+    WANT (won == FRESH) {
+        SERVE "You won! The number was ";
+        SERVE secretNumber;
+        SERVE "Attempts used: ";
+        SERVE attempts;
+    } ONLY {
+        SERVE "Game over! The number was ";
+        SERVE secretNumber;
+    }
+
+ORDER_END

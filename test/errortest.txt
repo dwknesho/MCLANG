@@ -1,0 +1,28 @@
+ORDER_START
+
+    !! SCANNING ERROR 1: single quotes not valid as string delimiter
+    RECIPE message = 'Hello World';
+
+    !! SCANNING ERROR 2: identifier cannot start with uppercase
+    PRICE TotalCost = 100;
+
+    !! SCANNING ERROR 3: trailing decimal point is invalid (must be 10.5 or 10)
+    PRICE x = 10.;
+
+    !! SCANNING ERROR 4: \q is not a valid escape sequence
+    RECIPE label = "item \q price";
+
+    !! SCANNING ERROR 5: single & is not valid, must be &&
+    QUALITY result = FRESH & EXPIRED;
+
+    !! Errors not caught by the scanner
+
+    !! NOT a scanning error — missing semicolon is a PARSING ERROR
+    !! Scanner produces valid tokens: <id> <assign_as> <numlit>
+    PRICE count = 5
+
+    !! NOT a scanning error — type mismatch is a SEMANTIC ERROR
+    !! Scanner produces valid tokens: <id> <assign_as> <stringlit> <semi>
+    PRICE age = "twenty";
+
+ORDER_END

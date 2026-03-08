@@ -60,7 +60,12 @@ public class LiteralScanner {
                     case '"': string.append('"'); break;
                     case '\\': string.append('\\'); break;
                     default:
-                        stream.advance(); 
+                        while (stream.currentChar != '"' && stream.currentChar != -1) {
+                            stream.advance();
+                        }
+                        if (stream.currentChar == '"') {
+                            stream.advance();
+                        }
                         throw new LexicalException("Invalid escape sequence", "\\" + escapeChar, startLine, startCol);
                 }
             } else {

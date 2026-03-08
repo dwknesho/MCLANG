@@ -20,7 +20,6 @@ public class OperatorScanner {
             // ++  ->  <incer>
             // +=  ->  <assign_add>
             case '+': {
-                stream.advance();
                 if (stream.currentChar == '+') {
                     stream.advance();
                     return new Token("<incre>", "++", null, line, col);
@@ -36,7 +35,6 @@ public class OperatorScanner {
             // --  ->  <decre>
             // -=  ->  <assign_min>
             case '-': {
-                stream.advance();
                 if (stream.currentChar == '-') {
                     stream.advance();
                     return new Token("<decre>", "--", null, line, col);
@@ -51,7 +49,6 @@ public class OperatorScanner {
             // *   ->  <arith_mul>
             // *=  ->  <assign_mul>
             case '*': {
-                stream.advance();
                 if (stream.currentChar == '=') {
                     stream.advance();
                     return new Token("<assign_mul>", "*=", null, line, col);
@@ -62,12 +59,61 @@ public class OperatorScanner {
             // /   ->  <arith_div>
             // /=  ->  <assign_div>
             case '/': {
-                stream.advance();
                 if (stream.currentChar == '=') {
                     stream.advance();
                     return new Token("<assign_div>", "/=", null, line, col);
                 }
                 return new Token("<arith_div>", "/", null, line, col);
+            }
+
+            // %   ->  <arith_mod>
+            // %=  ->  <assign_mod>
+            case '%': {
+                if (stream.currentChar == '=') {
+                    stream.advance();
+                    return new Token("<assign_mod>", "%=", null, line, col);
+                }
+                return new Token("<arith_mod>", "%", null, line, col);
+            }
+
+            // =   ->  <assign_as>
+            // ==  ->  <rel_eq>
+            case '=': {
+                if (stream.currentChar == '=') {
+                    stream.advance();
+                    return new Token("<rel_eq>", "==", null, line, col);
+                }
+                return new Token("<assign_as>", "=", null, line, col);
+            }
+
+            // !   ->  <log_not>
+            // !=  ->  <rel_neq>
+            case '!': {
+                if (stream.currentChar == '=') {
+                    stream.advance();
+                    return new Token("<rel_neq>", "!=", null, line, col);
+                }
+                return new Token("<log_not>", "!", null, line, col);
+            }
+
+            // <   ->  <rel_ls>
+            // <=  ->  <rel_lse>
+            case '<': {
+                if (stream.currentChar == '=') {
+                    stream.advance();
+                    return new Token("<rel_lse>", "<=", null, line, col);
+                }
+                return new Token("<rel_ls>", "<", null, line, col);
+            }
+
+             // >   ->  <rel_gt>
+            // >=  ->  <rel_gte>
+            case '>': {
+                if (stream.currentChar == '=') {
+                    stream.advance();
+                    return new Token("<rel_gte>", ">=", null, line, col);
+                }
+                return new Token("<rel_gt>", ">", null, line, col);
             }
 
             // Logical Operators
