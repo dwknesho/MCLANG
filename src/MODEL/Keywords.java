@@ -1,3 +1,5 @@
+package MODEL;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,15 +94,9 @@ public class Keywords {
 }
   
     public static String getTokenName(String word) {
-    // Check keywords first
-    String keyword = KEYWORDS.get(word);
-    if (keyword != null) return keyword;
-
-    // Check if it's a valid identifier (must start with lowercase)
-    if (word != null && !word.isEmpty() && Character.isLowerCase(word.charAt(0))) {
-        return "<id>";
+        // Check keywords first
+        String keyword = KEYWORDS.get(word);
+        if (keyword != null) return keyword;
+        return null; // invalid 
     }
-
-    return null; // invalid 
-}
 }

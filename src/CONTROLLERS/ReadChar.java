@@ -1,3 +1,5 @@
+package CONTROLLERS;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,7 +20,7 @@ public class ReadChar {
         }
     }
 
-    public void advance() throws IOException {  //read next character in the file and updates line/col numbers for errors
+    public void advance() throws IOException {
         if (currentChar == '\n') {
             line++;
             col = 0;
@@ -28,7 +30,7 @@ public class ReadChar {
         currentChar = reader.read();
     }
 
-    public void skipSpaceandComments() throws IOException { //skip spaces, tabs, newlines, and comments
+    public void skipSpaceAndComments() throws IOException {
         while (currentChar != -1) {
             if (Character.isWhitespace(currentChar)) { //skip spaces, tab, newline using java method
                 advance();
@@ -36,15 +38,15 @@ public class ReadChar {
             //check if ! is comment or logical not
             else if (currentChar == '!') {
                 reader.mark(1);
-                int nextChar = reader.read(); //peak next character
+                int nextChar = reader.read(); // peak next character
 
-                if (nextChar == '!') { //single line
+                if (nextChar == '!') { // single line comment
                     col++;
                     while (currentChar != '\n' && currentChar != -1) {
                         advance(); 
                     }
                 } 
-                else if (nextChar == '*') { //multi line
+                else if (nextChar == '*') { // multi line comment
                     col++;
                     advance(); 
                     advance();
@@ -67,8 +69,8 @@ public class ReadChar {
                         return;
                     }
                 } 
-                else {
-                    reader.reset();
+                else {                  // ! is a logical NOT operator
+                    reader.reset();     // Go back to the mark spot which is !
                     break;
                 }
             } 
