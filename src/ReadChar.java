@@ -7,6 +7,7 @@ public class ReadChar {
     public int line = 1;
     public int col = 0;
     public int currentChar = -1;
+    public boolean unclosedComment = false;
 
     public ReadChar(String filePath) {
         try {
@@ -29,7 +30,6 @@ public class ReadChar {
 
     public void skipSpaceandComments() throws IOException { //skip spaces, tabs, newlines, and comments
         while (currentChar != -1) {
-            
             if (Character.isWhitespace(currentChar)) { //skip spaces, tab, newline using java method
                 advance();
             } 
@@ -63,6 +63,7 @@ public class ReadChar {
                         }
                     }
                     if (!closed) {
+                        unclosedComment = true;
                         return;
                     }
                 } 

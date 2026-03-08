@@ -10,18 +10,29 @@ public class Tester {
 
     public static void main(String[] args) {
     
-        String filePath = "test/simple.txt";
+        String filePath = "MCLANG/test/simple.txt";
         Scanner scanner = new Scanner(filePath);
         int errorCounter = 0;
 
-        System.out.println("\n--------------Start--------------\n");
+        System.out.println("\nPHASE 2 COMPILER\n");
 
         try {
             Token token;
+            boolean foundOrderEnd = false; //tracks eof
             do {
                 token = scanner.getNextToken();
+                //to make sure nothing is written after ORDER_END
+                if (foundOrderEnd && !token.tokenName.equals("[EOF]")) {
+                    errorCounter++;
+                    System.out.print("!!ERROR " + errorCounter + "!! ");
+                    String detail = "Error " + errorCounter + " [Line " + token.line + ", Col " + token.col + "]: " +
+                                    "Nothing is allowed after ORDER_END ('" + token.lexeme + "')";
+                    errorList.add(detail);
+                    
+                    continue;
+                }
                 
-                // 1. Error Handling Requirement: Print errors if found
+                // Print errors if found
                 if (token.tokenName.equals("<error>")) {
                     errorCounter++;
                     // Print the placeholder in the code output
@@ -34,7 +45,11 @@ public class Tester {
                     continue;
                 }
 
-                // 2. Identifier Requirement: Print lexeme and add to Symbol Table
+                if (token.tokenName.equals("<end>")){
+                    foundOrderEnd = true;
+                }
+
+                //Print lexeme and add to Symbol Table
                 if (token.tokenName.equals("<id>")) {
                     // Check if the id is already in the symbol table, if not, add it
                     if (!symbolTable.containsKey(token.lexeme)) {
@@ -42,13 +57,18 @@ public class Tester {
                     }
                     System.out.print(" " + token.lexeme + " ");
                 } 
-                // 3. Constant Values Requirement: Print their actual values
+                //Print actual values
                 else if (token.tokenName.equals("<numlit>") || token.tokenName.equals("<stringlit>")) {
-                    System.out.print(" " + token.value + " ");
+                    Object val = token.value;
+                    if (val instanceof Double && ((Double) val) == Math.floor((Double) val)) {
+                        System.out.print(" " + (int)(double)(Double) val + " ");
+                    } else {
+                        System.out.print(" " + val + " ");
+                    }
                 } 
-                // 4. Reserved Words & Operators Requirement: Print token names
+                // Print token names
                 else {
-                    // Formatting logic to make the console output look cleaner
+                    // Formatting to make the console output look cleaner
                     if (token.tokenName.equals("[EOF]")) {
                         System.out.println("\n[EOF]");
                     } else if (token.tokenName.equals("<semi>") || 
@@ -56,7 +76,7 @@ public class Tester {
                             token.tokenName.equals("<r_brace>") || 
                             token.tokenName.equals("<start>") || 
                             token.tokenName.equals("<end>")) {
-                            // Drop a new line after semicolons, brackets, start, or end
+                            // new line after semicolons, brackets, start, or end
                         System.out.println(token.tokenName); 
                     } else {        
                         System.out.print(token.tokenName + " ");
@@ -65,14 +85,14 @@ public class Tester {
             } while (!token.tokenName.equals("[EOF]"));
 
             if (!errorList.isEmpty()) {
-                System.out.println("\n--- LEXICAL ERRORS ---");
+                System.out.println("\nLEXICAL ERRORS");
                 for (String error : errorList) {
                     System.out.println(error);
                 }
             }
 
             // Print the final symbol table
-            System.out.println("\n--------------Symbol Table--------------\n");
+            System.out.println("\nSymbol Table\n");
             for (String key : symbolTable.keySet()) {
                 System.out.println("Identifier: " + key + " | Details: " + symbolTable.get(key));
             }

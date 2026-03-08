@@ -12,32 +12,36 @@ public class Scanner {
     public Token getNextToken() throws IOException {
         
         int startLine = stream.line;
-    int startCol = stream.col;
+        int startCol = stream.col;
     
-    stream.skipSpaceandComments();
+        stream.skipSpaceandComments();
 
-    // 2. Check if we are at the End of File
+        // Check if we are at eof
         if (stream.currentChar == -1) {
 
-            if (startLine != stream.line) {
+            if (stream.unclosedComment) {
+                stream.unclosedComment = false;
                 return new Token("<error>", "EOF", "Unclosed multi-line comment", startLine, startCol);
             }
 
             return new Token("[EOF]", "EOF", null, stream.line, stream.col);
         }
 
-        int currentCol = stream.col;
         char c = (char) stream.currentChar;
 
         // If it starts with a letter, it must be an identifier or keyword
-        if (Character.isLetter(c)) {
+        if (Character.isLetter(c) || c == '_') {
             return Identifiers.scan(stream, startCol);
         } 
         // if it starts with digits then its a number literal 
-        else if (Character.isDigit(c) || c == '.') { // triggers scanNumber if starts with .
-            return Literals.scanNumber(stream, startCol);
-        } 
-        // If it starts " (Double Quotation) then it is a string literal.
+        else if (Character.isDigit(c) || c == '.') {
+            Token numToken = Literals.scanNumber(stream, startCol);
+            if (Character.isLetter(stream.currentChar) || stream.currentChar == '_') {
+                return Identifiers.scanInvalidDigitStart(stream, numToken.lexeme, startCol);
+            }
+            return numToken;
+        }
+        // If it starts " then it is a string literal.
         else if (c == '"') {
             return Literals.scanString(stream, startCol);
         } 
@@ -48,7 +52,7 @@ public class Scanner {
             if (opToken != null) {
                 return opToken;
             }
-            // Fallback for unrecognized characters
+            // for unrecognized characters
             stream.advance(); // consume the character
             return new Token("<error>", String.valueOf(c), "Unrecognized character", stream.line, startCol);
         }

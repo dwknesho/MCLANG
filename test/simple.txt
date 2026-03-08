@@ -1,12 +1,6 @@
 ORDER_START
-    PRICE @x = 3.14;
-    PRICE y = 0.5;
-    PRICE z = 10.;
-    PRICE w = .5;
-    RECIPE a = "Hello World";
-    !! This is a comment
-    !* This i a multiline comment that was not close
-
-    RECIPE p = "Hello World";
+   RECIPE jb = "hello";
+   JOSE test = 2;
+   RECIPE Jb = 3;
 
 ORDER_END

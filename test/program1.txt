@@ -1,0 +1,64 @@
+ORDER_START
+
+    !*declaration, i/o, arithmetic, assignment operators, 
+    conditionals, loops, arrays, and functions*!
+    
+    !! Function to compute the average of a PRICE array
+    TASK PRICE computeAverage(PRICE total, PRICE count) {
+        YIELD total / count;
+    }
+
+    !! Function to return letter grade based on score
+    TASK RECIPE getGrade(PRICE score) {
+        WANT (score >= 90) {
+            YIELD "A";
+        } SIDE (score >= 80) {
+            YIELD "B";
+        } SIDE (score >= 70) {
+            YIELD "C";
+        } SIDE (score >= 60) {
+            YIELD "D";
+        } ONLY {
+            YIELD "F";
+        }
+    }
+
+    !! Declare variables
+    PRICE scores[5];
+    PRICE i = 0;
+    PRICE sum = 0;
+    PRICE average;
+    RECIPE grade;
+    RECIPE studentName;
+
+    !! Get student name
+    SERVE "Enter student name: ";
+    ORDER studentName;
+
+    !! Collect 5 scores using a loop
+    PREP (i = 0; i < 5; i++) {
+        SERVE "Enter score: ";
+        ORDER scores[i];
+        sum += scores[i];
+    }
+
+    !! Compute average
+    average = computeAverage(sum, 5);
+    grade = getGrade(average);
+
+    !! Display results
+    SERVE "Student: ";
+    SERVE studentName;
+    SERVE "Average Score: ";
+    SERVE average;
+    SERVE "Letter Grade: ";
+    SERVE grade;
+
+    !! Check if passed
+    WANT (average >= 60) {
+        SERVE "Result: PASSED";
+    } ONLY {
+        SERVE "Result: FAILED";
+    }
+
+ORDER_END
