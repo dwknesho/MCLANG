@@ -11,7 +11,7 @@ public class Tester {
     private static ErrorReporter errorReporter = new ErrorReporter();
 
     public static void main(String[] args) {
-        String filePath = "MCLANG/test/simple.txt"; 
+        String filePath = "test/simple.txt"; 
         Scanner scanner = new Scanner(filePath);
 
         System.out.println("\nPHASE 2 COMPILER\n");
@@ -57,6 +57,9 @@ public class Tester {
         }
     }
 
+
+
+    //  Methods
     private static void processToken(Token token) {
         if (token.tokenName.equals("<id>")) {
             symbolTable.add(token.lexeme, "type: id");          // Adds id to the symbol table

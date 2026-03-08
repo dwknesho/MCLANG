@@ -28,7 +28,7 @@ public class IdentifierScanner {
         else if (Character.isUpperCase(firstChar)) {
             // Must be strictly uppercase
             if (!lexeme.equals(lexeme.toUpperCase())) {
-                throw new LexicalException("Keywords must be strictly uppercase", lexeme, startLine, startCol);
+                throw new LexicalException("Invalid keyword or identifier", lexeme, startLine, startCol);
             }
             
             // Look up in the keywords map
@@ -36,7 +36,7 @@ public class IdentifierScanner {
             
             // Invalid keyword throws error
             if (tokenName == null) {
-                throw new LexicalException("Unrecognized keyword (Identifiers must start with lowercase)", lexeme, startLine, startCol);
+                throw new LexicalException("Invalid keyword or identifier", lexeme, startLine, startCol);
             }
             return new Token(tokenName, lexeme, null, startLine, startCol);
         } 

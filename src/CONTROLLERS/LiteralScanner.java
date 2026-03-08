@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public class LiteralScanner {
 
+    // For numeric literals
     public static Token scanNumber(ReadChar stream, int startCol) throws IOException {
         int startLine = stream.line;
         StringBuilder number = new StringBuilder();
@@ -35,6 +36,7 @@ public class LiteralScanner {
         return new Token("<numlit>", lexeme, value, startLine, startCol);
     }
 
+    // For string literals
     public static Token scanString(ReadChar stream, int startCol) throws IOException {
         int startLine = stream.line;
         StringBuilder string = new StringBuilder();

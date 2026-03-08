@@ -31,7 +31,7 @@ public class SymbolTable {
     public void printTable() {
         System.out.println("\nSymbol Table\n");
         for (String key : table.keySet()) {
-            System.out.println("Identifier: " + key + " | Details: " + table.get(key));
+            System.out.println("Identifier: " + key);
         }
     }
 }
