@@ -45,7 +45,7 @@ public class LiteralScanner {
         lexemeBuffer.append('"'); 
         stream.advance(); 
 
-        while (stream.currentChar != '"' && stream.currentChar != -1) {
+        while (stream.currentChar != '"' && stream.currentChar != -1 && stream.currentChar != '\n') {
             if (stream.currentChar == '\\') { 
                 lexemeBuffer.append('\\');
                 stream.advance();
@@ -75,7 +75,7 @@ public class LiteralScanner {
             stream.advance();
         }
 
-        if (stream.currentChar == -1) {
+        if (stream.currentChar == -1 || stream.currentChar == '\n') {
             throw new LexicalException("Unterminated string literal", lexemeBuffer.toString(), startLine, startCol);
         }
 

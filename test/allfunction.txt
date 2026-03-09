@@ -1,0 +1,98 @@
+ORDER_START
+
+!* 
+   FEATURE DEMONSTRATION PROGRAM
+   Tests all tokens, rules, and structures.
+*!
+
+!! 1. Variable and Array Declarations
+PRICE prices[3];
+RECIPE itemName = "McBurger Combo";
+QUALITY isAvailable = FRESH;
+PRICE counter = 0;
+PRICE result = 0.0;
+
+!! 2. Functions (TASK)
+TASK PRICE applyTax(PRICE basePrice) {
+    PRICE tax = 0.12;
+    YIELD basePrice + (basePrice * tax);
+}
+
+TASK EMPTY showMenu() {
+    !! String escape sequences: \", \\, \n, \t
+    SERVE "--- Menu ---\n\t1. Burger\n\t2. Fries\n\t3. \"Drink\" \\Soda\\";
+}
+
+!! 3. Main execution & I/O
+showMenu();
+SERVE "Enter your choice:";
+ORDER counter;
+
+!! 4. Exception Handling (CHECK, HANDLE, CLEAN, SPILL)
+CHECK {
+    !! Conditionals & Logical Operators
+    WANT (counter <= 0 || counter > 3) {
+        SPILL "Invalid Menu Choice";
+    }
+    SERVE "Valid choice!";
+} HANDLE (err) {
+    SERVE err;
+    counter = 1; !! Default fallback
+} CLEAN {
+    SERVE "Verification complete.";
+}
+
+!! 5. Switch Statement (MENU, FOOD, SOLDOUT, DONE)
+MENU (counter) {
+    FOOD 1:
+        prices[0] = 150.0;
+        DONE;
+    FOOD 2:
+        prices[1] = 50.5;
+        DONE;
+    FOOD 3:
+        prices[2] = 30.0;
+        DONE;
+    SOLDOUT:
+        isAvailable = EXPIRED;
+}
+
+!! 6. Conditionals (WANT, SIDE, ONLY) & Relational Operators
+WANT (isAvailable == FRESH && !EXPIRED) {
+    SERVE "Item is available.";
+} SIDE (prices[0] != 0) {
+    SERVE "Wait for processing...";
+} ONLY {
+    SERVE "Not available.";
+}
+
+!! 7. Nested Loops (REFILL, PREP) & Compound Operators
+PRICE total = 0;
+REFILL (counter > 0) {
+    
+    PREP (PRICE i = 0; i < 3; i++) {
+        WANT (prices[i] == 0) {
+            NEXT; !! Continue statement
+        }
+        
+        !! Assignment & Arithmetic Operators
+        total += prices[i];
+        prices[i] %= 2; 
+        prices[i] /= 1; 
+        prices[i] *= 1; 
+        prices[i] -= 0; 
+    }
+    counter--; !! Decrement
+}
+
+!! 8. Do-While Loop (STIR) & Increment
+STIR {
+    total++;
+} REFILL (total < 0);
+
+!! 9. Function call & String Concatenation
+result = applyTax(total);
+SERVE "Total for " + itemName;
+SERVE "Amount: " + result;
+
+ORDER_END

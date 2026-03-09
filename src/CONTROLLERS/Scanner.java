@@ -60,7 +60,6 @@ public class Scanner {
             
             // 7. Completely Unrecognized characters
             String errorChar = String.valueOf(c);
-            stream.advance(); 
             throw new LexicalException("Unrecognized character", errorChar, startLine, startCol);
         }
     }

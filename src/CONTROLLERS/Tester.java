@@ -11,7 +11,7 @@ public class Tester {
     private static ErrorReporter errorReporter = new ErrorReporter();
 
     public static void main(String[] args) {
-        String filePath = "MCLANG/test/program4.txt"; 
+        String filePath = "MCLANG/test/allwitherror.txt"; 
         Scanner scanner = new Scanner(filePath);
 
         System.out.println("\nPHASE 2 COMPILER\n");

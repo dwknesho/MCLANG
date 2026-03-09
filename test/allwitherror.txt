@@ -1,0 +1,90 @@
+ORDER_START
+
+!! ==========================================
+!! VALID SECTION 1: Standard Declarations
+!! ==========================================
+PRICE subtotal = 0.0;
+PRICE itemCount = 3;
+QUALITY isMember = FRESH;
+RECIPE storeName = "McLang Burgers";
+
+SERVE storeName;
+
+!! ==========================================
+!! ERROR CLUSTER 1: Malformed Identifiers
+!! ==========================================
+
+!! ERROR: Identifier cannot start with an uppercase letter
+PRICE TotalCost = 150.0; 
+
+!! ERROR: Identifier cannot start with a digit
+PRICE 1stItemPrice = 50.0; 
+
+!! ERROR: Identifier cannot start with an underscore
+PRICE _taxRate = 0.12; 
+
+!! ==========================================
+!! VALID SECTION 2: Control Flow & Loops
+!! ==========================================
+PREP (PRICE i = 0; i < itemCount; i++) {
+    subtotal += 50.0;
+}
+
+WANT (subtotal > 100.0) {
+    SERVE "Applying discount...";
+}
+
+!! ==========================================
+!! ERROR CLUSTER 2: Literal Formatting
+!! ==========================================
+
+!! ERROR: Single quotes are invalid delimiters for strings
+RECIPE greeting = 'Welcome back!'; 
+
+!! ERROR: Invalid escape sequence (\x is not allowed)
+RECIPE promo = "Get \x percent off!"; 
+
+!! ERROR: Trailing decimal point is invalid
+PRICE discountAmount = 10.; 
+
+!! ERROR: Leading decimal point is invalid
+PRICE extraFee = .75; 
+
+!! ERROR: Unterminated string literal (missing closing quote)
+RECIPE receiptText = "Thank you for your order
+
+!! ==========================================
+!! VALID SECTION 3: Arithmetic & Output
+!! ==========================================
+PRICE finalAmount = subtotal;
+finalAmount -= 10.0;
+SERVE "Final Amount: ";
+SERVE finalAmount;
+
+!! ==========================================
+!! ERROR CLUSTER 3: Symbols & Operators
+!! ==========================================
+
+!! ERROR: Unrecognized alien character (@ is not in the alphabet)
+PRICE @@@loyaltyPoints = 50.0; 
+
+!! ERROR: Invalid logical operator (single & instead of &&)
+WANT (isMember == FRESH & finalAmount > 50.0) {
+    SERVE "Free drink added!";
+}
+
+!! ==========================================
+!! ERROR CLUSTER 4: Unclosed Comments
+!! ==========================================
+!* We will close the shop after this transaction, 
+   but this comment block forgets the closing marker.
+   (This will trigger an EOF unclosed comment error)
+
+ORDER_END
+
+!! ==========================================
+!! ERROR 5: Post-End Violation
+!! ==========================================
+
+!! ERROR: No code is allowed after ORDER_END
+PRICE closed = 1;
