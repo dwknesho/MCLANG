@@ -1,64 +1,72 @@
 ORDER_START
 
-    !*declaration, i/o, arithmetic, assignment operators, 
-    conditionals, loops, arrays, and functions*!
-    
-    !! Function to compute the average of a PRICE array
-    TASK PRICE computeAverage(PRICE total, PRICE count) {
-        YIELD total / count;
-    }
+!! ============================================================
+!! TEST 1: Identifier starting with underscore
+!! ============================================================
+PRICE _badVar = 10;
 
-    !! Function to return letter grade based on score
-    TASK RECIPE getGrade(PRICE score) {
-        WANT (score >= 90) {
-            YIELD "A";
-        } SIDE (score >= 80) {
-            YIELD "B";
-        } SIDE (score >= 70) {
-            YIELD "C";
-        } SIDE (score >= 60) {
-            YIELD "D";
-        } ONLY {
-            YIELD "F";
-        }
-    }
+!! ============================================================
+!! TEST 2: Identifier starting with uppercase (not a keyword)
+!! ============================================================
+PRICE BadVar = 10;
 
-    !! Declare variables
-    PRICE scores[5];
-    PRICE i = 0;
-    PRICE sum = 0;
-    PRICE average;
-    RECIPE grade;
-    RECIPE studentName;
+!! ============================================================
+!! TEST 3: Identifier starting with a digit
+!! ============================================================
+PRICE 123abc = 10;
 
-    !! Get student name
-    SERVE "Enter student name: ";
-    ORDER studentName;
+!! ============================================================
+!! TEST 4: Unrecognized keyword (all-uppercase, not in keyword table)
+!! ============================================================
+PRICE x = NOTAKEYWORD;
 
-    !! Collect 5 scores using a loop
-    PREP (i = 0; i < 5; i++) {
-        SERVE "Enter score: ";
-        ORDER scores[i];
-        sum += scores[i];
-    }
+!! ============================================================
+!! TEST 5: Trailing decimal point
+!! ============================================================
+PRICE y = 10.;
 
-    !! Compute average
-    average = computeAverage(sum, 5);
-    grade = getGrade(average);
+!! ============================================================
+!! TEST 6: Leading decimal point
+!! ============================================================
+PRICE z = .5;
 
-    !! Display results
-    SERVE "Student: ";
-    SERVE studentName;
-    SERVE "Average Score: ";
-    SERVE average;
-    SERVE "Letter Grade: ";
-    SERVE grade;
+!! ============================================================
+!! TEST 7: Double decimal point
+!! ============================================================
+PRICE w = 10.5.2;
 
-    !! Check if passed
-    WANT (average >= 60) {
-        SERVE "Result: PASSED";
-    } ONLY {
-        SERVE "Result: FAILED";
-    }
+!! ============================================================
+!! TEST 8: Invalid escape sequence inside string
+!! ============================================================
+RECIPE msg = "hello \q world";
+
+!! ============================================================
+!! TEST 9: Unclosed string literal
+!! ============================================================
+RECIPE unclosed = "this string never ends
+
+!! ============================================================
+!! TEST 10: Single & instead of &&
+!! ============================================================
+QUALITY result = FRESH & EXPIRED;
+
+!! ============================================================
+!! TEST 11: Single | instead of ||
+!! ============================================================
+QUALITY result2 = FRESH | EXPIRED;
+
+!! ============================================================
+!! TEST 12: Unrecognized characters
+!! ============================================================
+PRICE p = 5 @ 2;
+PRICE q = 5 # 2;
+PRICE r = 5 $ 2;
+
+!! ============================================================
+!! TEST 13: Code after ORDER_END (tested at the bottom)
+!! ============================================================
 
 ORDER_END
+
+PRICE afterEnd = 99;
+SERVE "this should not be here";
