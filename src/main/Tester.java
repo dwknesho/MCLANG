@@ -1,17 +1,18 @@
-package CONTROLLERS;
+package main;
 
-import MODEL.Token;
-import MODEL.SymbolTable;
-import MODEL.ErrorReporter;
-import MODEL.LexicalException;
+import lexer.Token;
+import semantic.SymbolTable;
+import errors.ErrorReporter;
+import errors.LexicalException;
 import java.io.IOException;
+import lexer.Scanner;
 
 public class Tester {
     private static SymbolTable symbolTable = new SymbolTable();
     private static ErrorReporter errorReporter = new ErrorReporter();
 
     public static void main(String[] args) {
-        String filePath = "MCLANG/test/allwitherror.txt"; 
+        String filePath = "test/allwitherror.txt"; 
         Scanner scanner = new Scanner(filePath);
 
         System.out.println("\nPHASE 2 COMPILER\n");

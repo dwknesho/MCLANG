@@ -1,7 +1,6 @@
-package CONTROLLERS;
+package lexer;
 
-import MODEL.Token;
-import MODEL.LexicalException;
+import errors.LexicalException;
 import java.io.IOException;
 
 public class LiteralScanner {

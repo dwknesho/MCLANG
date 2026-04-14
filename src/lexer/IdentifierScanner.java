@@ -1,8 +1,6 @@
-package CONTROLLERS;
+package lexer;
 
-import MODEL.Token;
-import MODEL.LexicalException;
-import MODEL.Keywords;
+import errors.LexicalException;
 import java.io.IOException;
 
 public class IdentifierScanner {

@@ -1,4 +1,4 @@
-package MODEL;
+package semantic;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

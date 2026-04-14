@@ -1,4 +1,4 @@
-package MODEL;
+package errors;
 
 public class LexicalException extends RuntimeException{
     public int line;

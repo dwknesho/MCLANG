@@ -1,4 +1,4 @@
-package CONTROLLERS;
+package lexer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -48,7 +48,6 @@ public class ReadChar {
                 } 
                 else if (nextChar == '*') { // multi line comment
                     col++;
-                    advance(); 
                     advance();
                     boolean closed = false;
 

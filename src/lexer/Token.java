@@ -1,4 +1,4 @@
-package MODEL;
+package lexer;
 
 public class Token {
     public String tokenName;                //name of token [ORDER_START]
