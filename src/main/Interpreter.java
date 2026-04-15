@@ -1,40 +1,38 @@
 package main;
 
-import lexer.Scanner;
-import errors.ErrorReporter;
+import lexer.Scanner; 
 import parser.ParseTable;
 import parser.Parser;
+import semantic.SymbolTable; // Import the Symbol Table!
+import errors.ErrorReporter;
 
 public class Interpreter {
     public static void main(String[] args) {
-        // NOTE: Make sure these paths match your actual file structure!
         String codePath = "test/program1.txt"; 
-        
-        // Pointing to your newly renamed V3 CSV file
         String csvPath = "src/parser/LL1 PARSING TABLE V3.csv"; 
 
         try {
-            System.out.println("Initializing Interpreter...");
+            System.out.println("\n\n\nInitializing Interpreter...");
             
-            // 1. Initialize the Lexer
+            ErrorReporter reporter = new ErrorReporter();
             Scanner scanner = new Scanner(codePath);
+            SymbolTable symTable = new SymbolTable(); // 1. Create the Symbol Table
             
-            // 2. Load the LL(1) Parsing Table
             ParseTable table = new ParseTable();
             table.loadCSV(csvPath);
-            System.out.println("Parse Table Loaded Successfully.");
+            System.out.println("\n\n\nParse Table Loaded Successfully.");
 
-            // 3. Initialize and Run the Parser
-            Parser parser = new Parser(scanner, table);
+            // 2. Pass the Symbol Table into the Parser
+            Parser parser = new Parser(scanner, table, reporter, symTable);
             parser.parse();
 
-        } catch (errors.SyntaxException se) {
-            // If the parser crashes, report the syntax error!
-            ErrorReporter reporter = new ErrorReporter();
-            reporter.reportSyntaxError(se.line, se.col, se.getMessage());
+            // 3. Print the Errors AND the Symbol Table at the end!
             reporter.printSummary();
+            symTable.printTable();
+
         } catch (Exception e) {
             System.err.println("Fatal System Error: " + e.getMessage());
+            e.printStackTrace(); 
         }
     }
 }
