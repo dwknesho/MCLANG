@@ -28,6 +28,13 @@ public class ErrorReporter {
         errorList.add(detail);
     }
 
+    // Reports a Syntax Error from the Parser
+    public void reportSyntaxError(int line, int col, String message) {
+        errorCounter++;
+        String detail = "Syntax Error " + errorCounter + " [Line " + line + ", Col " + col + "]: " + message;
+        errorList.add(detail);
+    }
+
     public boolean hasErrors() {
         return !errorList.isEmpty();
     }
@@ -38,7 +45,7 @@ public class ErrorReporter {
 
     public void printSummary() {
         if (hasErrors()) {
-            System.out.println("\nLEXICAL ERRORS");
+            System.out.println("\nCOMPILATION ERRORS");
             for (String error : errorList) {
                 System.out.println(error);
             }

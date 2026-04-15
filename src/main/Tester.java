@@ -1,4 +1,4 @@
-package main;
+/*package main;
 
 import lexer.Token;
 import semantic.SymbolTable;
@@ -92,3 +92,4 @@ public class Tester {
             name.equals("<end>");
     }
 }
+*/
