@@ -92,6 +92,8 @@ static {
                 return t;
             } catch (LexicalException le) {
                 reporter.reportLexicalError(le.line, le.col, le.getMessage(), le.lexeme);
+                System.out.print("<ERROR:" + reporter.getErrorCount() + "> ");
+                
             } catch (Exception e) {
                 return new Token("eof", "", null, -1, -1);
             }

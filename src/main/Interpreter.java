@@ -8,8 +8,8 @@ import errors.ErrorReporter;
 
 public class Interpreter {
     public static void main(String[] args) {
-        String codePath = "C:\\Users\\mirai\\Documents\\Compiler\\MCLANG\\test\\program3.txt"; 
-        String csvPath = "C:\\Users\\mirai\\Documents\\Compiler\\MCLANG\\src\\parser\\LL1_PARSING_TABLE_CLEANED-2.csv"; 
+        String codePath = "test/program1.txt"; 
+        String csvPath = "src/parser/LL1_PARSE_FINAL.csv"; 
 
         try {
             System.out.println("\n\n\nInitializing Interpreter...");
