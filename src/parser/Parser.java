@@ -3,7 +3,6 @@ package parser;
 import lexer.Scanner; 
 import lexer.Token;
 import semantic.SymbolTable;
-import errors.SyntaxException;
 import errors.LexicalException;
 import errors.ErrorReporter;
 import grtree.Tree;
@@ -171,8 +170,13 @@ static {
         Tree ast = toAST(root);
         if (ast == null) ast = new Tree("PROGRAM"); // safety fallback
 
-        System.out.println("Abstract Syntax Tree built successfully.\n");
-        new TreeScrollFrame(ast);
+        // ONLY draw the AST window if there are absolutely no errors!
+        if (!reporter.hasErrors()) {
+            System.out.println("Abstract Syntax Tree built successfully.\n");
+            new TreeScrollFrame(ast);
+        } else {
+            System.out.println("[!] Syntax or Lexical errors detected. AST visualization skipped.\n");
+        }
     }
 
     // ---------------------------------------------------------------

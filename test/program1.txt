@@ -4,7 +4,7 @@ ORDER_START
     conditionals, loops, arrays, and functions*!
     
     !! Function to compute the average of a PRICE array
-    TASK PRICE ComputeAverage(PRICE total, PRICE count) {
+    TASK pRICE ComputeAverage(PRICE total, PRICE count) {
         YIELD total / count;
     }
 
