@@ -3,7 +3,7 @@ package main;
 import lexer.Scanner; 
 import parser.ParseTable;
 import parser.Parser;
-import semantic.SymbolTable; // Import the Symbol Table!
+import semantic.SymbolTable;
 import errors.ErrorReporter;
 
 public class Tester {
@@ -12,7 +12,7 @@ public class Tester {
         String csvPath = "src/parser/LL1_PARSE_FINAL.csv"; 
 
         try {
-            System.out.println("\n\n\nInitializing Interpreter...");
+            System.out.println("\n\n\nInitializing Program...");
                  // Build all the components the parser depends on
             ErrorReporter reporter = new ErrorReporter();
             Scanner scanner = new Scanner(codePath);

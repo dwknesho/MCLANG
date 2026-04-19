@@ -3,7 +3,6 @@ package parser;
 import lexer.Scanner; 
 import lexer.Token;
 import semantic.SymbolTable;
-import errors.SyntaxException;
 import errors.LexicalException;
 import errors.ErrorReporter;
 import grtree.Tree;
@@ -101,7 +100,6 @@ public class Parser {
         Stack<Tree> stack = new Stack<>();
         Tree root = new Tree("PROGRAM"); 
          // Push in reverse order: eof goes on first (bottom), PROGRAM on top
-        stack.push(new Tree("eof")); 
         stack.push(root);            
 
         System.out.println("\nStarting Syntax Analysis...\n");
@@ -214,9 +212,6 @@ public class Parser {
             System.out.println("[!] Syntax or Lexical errors detected. AST visualization skipped.\n");
         }
     }
-
- 
-    @SuppressWarnings("unchecked")
       // Recursively converts the concrete parse tree into an AST by removing all the passthrough nodes defined in PASSTHROUGH_NODES.
     private Tree toAST(Tree node) {
         if (node == null) return null;

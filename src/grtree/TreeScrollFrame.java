@@ -2,7 +2,6 @@ package grtree ;
 
 import javax.swing.* ;
 import java.awt.* ;
-import java.awt.event.* ;
 
 /**
 * A TreeScrollFrame is a nice frame that paints its 
