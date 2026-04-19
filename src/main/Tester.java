@@ -13,11 +13,12 @@ public class Tester {
 
         try {
             System.out.println("\n\n\nInitializing Interpreter...");
-            
+                 // Build all the components the parser depends on
             ErrorReporter reporter = new ErrorReporter();
             Scanner scanner = new Scanner(codePath);
             SymbolTable symTable = new SymbolTable(); // 1. Create the Symbol Table
-            
+           
+            // Load the LL(1) table from the CSV
             ParseTable table = new ParseTable();
             table.loadCSV(csvPath);
             System.out.println("\n\n\nParse Table Loaded Successfully.");

@@ -64,12 +64,15 @@ public class ParseTable {
     }
 
     public String[] getRule(String nonTerminal, String terminal) {
+        // Returns the RHS symbols for a given (nonTerminal, terminal) pair
         if (table.containsKey(nonTerminal)) {
             return table.get(nonTerminal).get(terminal);
         }
-        return null;
+        //Returns null if no rule exists for this pair, which the parser can check to detect syntax errors
+        return null; 
     }
 
+     // Epsilon counts as a terminal too — the parse loop handles it separately
     public boolean isTerminal(String symbol) {
         return terminalSet.contains(symbol) || symbol.equals("ε");
     }
