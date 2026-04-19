@@ -21,14 +21,10 @@ public class Parser {
     private ErrorReporter reporter;
     private SymbolTable symTable;
     
-    private int currentPrintLine = -1;
+    private int currentPrintLine = -1; // Tracks which source line we last printed on, so we know when to add a newline
     private Token lastPrintedToken = null; // Stops duplicate printing during Panic Mode
 
-    // ---------------------------------------------------------------
-    // These are the "noise" non-terminals that exist only to enforce
-    // grammar structure but carry no semantic meaning on their own.
-    // They will be PRUNED from the concrete tree to produce the AST.
-    // ---------------------------------------------------------------
+     // This are the "noise' non terminals that will be PRUNED from the concrete tree to produce the AST.
     private static final Set<String> PASSTHROUGH_NODES = new HashSet<>();
     static {
         // ── EXPRESSION CHAIN ──
@@ -77,7 +73,7 @@ public class Parser {
         this.reporter = reporter;
         this.symTable = symTable;
     }
-
+     //Keeps asking the scanner for the next token until it gets a valid one.
     private Token fetchNextToken() {
         while (true) {
             try {
@@ -100,11 +96,11 @@ public class Parser {
             }
         }
     }
-
+      //Is the main LL(1) parsing loop. It works like a stack machine
     public void parse() throws Exception {
         Stack<Tree> stack = new Stack<>();
         Tree root = new Tree("PROGRAM"); 
-        
+         // Push in reverse order: eof goes on first (bottom), PROGRAM on top
         stack.push(new Tree("eof")); 
         stack.push(root);            
 
@@ -157,8 +153,9 @@ public class Parser {
                 }
             } 
             else {
+                // Top of stack is a non-terminal — look up what rule to expand it with
                 String[] rhs = table.getRule(topSymbol, tokenSymbol);
-                
+                 //No rule exists for this (non-terminal, token) combination.
                 if (rhs == null) {
                     actionStr = "Error: No rule for " + topSymbol;
                     reporter.reportSyntaxError(currentToken.line, currentToken.col, 
@@ -169,17 +166,19 @@ public class Parser {
                     if (!tokenSymbol.equals("eof")) {
                         currentToken = fetchNextToken();
                     } else {
+                         // Can't advance past EOF — pop the stuck non-terminal instead
                         stack.pop(); 
                     }
                 } else {
                     actionStr = "Predict " + topSymbol + " -> " + String.join(" ", rhs);
+                     // Found a valid rule. Pop the non-terminal, add its children to the tree,
                     stack.pop(); 
                     Tree[] children = new Tree[rhs.length];
                     for (int i = 0; i < rhs.length; i++) {
                         children[i] = new Tree(rhs[i]);
                         topNode.addChild(children[i]); 
                     }
-
+                    // Push them onto the stack in REVERSE order so the leftmost symbol
                     for (int i = rhs.length - 1; i >= 0; i--) {
                         stack.push(children[i]);
                     }
@@ -216,15 +215,14 @@ public class Parser {
         }
     }
 
-    // ---------------------------------------------------------------
-    // AST BUILDER
-    // ---------------------------------------------------------------
+ 
     @SuppressWarnings("unchecked")
+      // Recursively converts the concrete parse tree into an AST by removing all the passthrough nodes defined in PASSTHROUGH_NODES.
     private Tree toAST(Tree node) {
         if (node == null) return null;
 
         String rawLabel = rawLabel(node.data);
-
+     //Recursively build AST versions of all children.
         List<Tree> astChildren = new ArrayList<>();
         for (Object childObj : node.children) {
             Tree child = (Tree) childObj;
@@ -238,19 +236,19 @@ public class Parser {
 
         if (isPassthrough) {
             if (astChildren.isEmpty()) {
-                return null;          
+                return null;  // nothing meaningful here, drop it            
             } else if (astChildren.size() == 1) {
-                return astChildren.get(0); 
+                return astChildren.get(0);   // just pass the single child up, skip this wrapper
             }
         }
-
+          // Rebuild this node with only the meaningful children attached
         Tree astNode = new Tree(node.data);
         for (Tree c : astChildren) {
             astNode.addChild(c);
         }
         return astNode;
     }
-
+   // Checks if a label is in our passthrough set.
     private boolean isPassthrough(String rawLabel) {
         if (PASSTHROUGH_NODES.contains(rawLabel)) return true;
         for (String p : PASSTHROUGH_NODES) {
@@ -264,33 +262,33 @@ public class Parser {
         return idx >= 0 ? data.substring(0, idx) : data;
     }
 
+    // Token names from the scanner come with angle brackets like "<if>" or "[EOF]".
+    // The parse table uses clean names like "if" and "eof", so we strip the bracket
     private String normalizeToken(String tokenName) {
         if (tokenName.equals("[EOF]")) return "eof";
         return tokenName.replaceAll("[<>]", ""); 
     }
 
-    // ---------------------------------------------------------------
-    // DISPLAY UTILITIES
-    // ---------------------------------------------------------------
+     // Prints a token to the console, making sure we never print the same token twice
     private void printOnce(Token token, boolean asError, int errNum) {
         // If we already printed this exact token, or it's an EOF, skip it!
         if (token == lastPrintedToken || token.tokenName.equals("[EOF]") || token.tokenName.equals("eof")) {
             return;
         }
         lastPrintedToken = token; 
-
+        // Start a new line when we move to a new source line
         if (currentPrintLine != -1 && token.line > currentPrintLine) {
             System.out.println(); 
         }
         currentPrintLine = token.line;
-
+          // Use friendlier display names for the three literal types
         String name = token.tokenName.replaceAll("[<>]", ""); 
         String displayLabel = name;
         if (name.equals("id")) displayLabel = "identifier";
         if (name.equals("numlit")) displayLabel = "num_lit";
         if (name.equals("stringlit")) displayLabel = "string_lit";
         
-        // Build the core token string
+        // Literals show the actual written value; keywords/operators just show the token name
         String formattedStr;
         if (name.equals("id") || name.equals("numlit") || name.equals("stringlit")) {
             formattedStr = token.lexeme + " (" + displayLabel + ")";
