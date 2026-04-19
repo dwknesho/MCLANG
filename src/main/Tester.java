@@ -6,7 +6,7 @@ import parser.Parser;
 import semantic.SymbolTable; // Import the Symbol Table!
 import errors.ErrorReporter;
 
-public class Interpreter {
+public class Tester {
     public static void main(String[] args) {
         String codePath = "test/program1.txt"; 
         String csvPath = "src/parser/LL1_PARSE_FINAL.csv"; 

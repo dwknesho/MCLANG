@@ -1,0 +1,6 @@
+ORDER_START
+    PRICE count = 5
+    WANT (count > 0){
+        SERVE count;
+    }
+ORDER_END
