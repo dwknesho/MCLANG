@@ -1,5 +1,5 @@
 ORDER_START
-    PRICE count = 5
+    PRICE count = 5;
     WANT (count > 0){
         SERVE count;
     }

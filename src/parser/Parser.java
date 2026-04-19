@@ -8,9 +8,12 @@ import errors.LexicalException;
 import errors.ErrorReporter;
 import grtree.Tree;
 import grtree.TreeScrollFrame;
+
 import java.util.Stack;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Parser {
     private Scanner scanner;
@@ -80,7 +83,7 @@ public class Parser {
             try {
                 Token t = scanner.getNextToken();
 
-                // TEMPORARY PHASE 3 HACK: Add every <id> to the Symbol Table
+                // Add Identifiers to the Symbol Table
                 if (t != null && t.tokenName.equals("<id>")) {
                     if (symTable.getAttributes(t.lexeme) == null) {
                         symTable.declareVariable(t.lexeme, "Pending Phase 4");
@@ -108,12 +111,26 @@ public class Parser {
         System.out.println("\nStarting Syntax Analysis...\n");
         Token currentToken = fetchNextToken();
 
+        // Setup the trace log and step counter
+        int step = 1;
+        List<String> parseTrace = new ArrayList<>();
+
         while (!stack.isEmpty()) {
             Tree topNode = stack.peek(); 
             String topSymbol = topNode.data;
 
+            // Capture current state for the Trace Table
+            String currentStackStr = getStackString(stack);
+            String inputStr = currentToken.lexeme;
+            if (inputStr.isEmpty() && (currentToken.tokenName.equals("eof") || currentToken.tokenName.equals("[EOF]"))) {
+                inputStr = "EOF";
+            }
+            String actionStr = "";
+
             if (topSymbol.equals("ε")) {
+                actionStr = "Pop ε";
                 stack.pop();
+                parseTrace.add(String.format("%-4d | %-70s | %-15s | %s", step++, truncate(currentStackStr, 70), inputStr, actionStr));
                 continue; 
             }
 
@@ -121,23 +138,21 @@ public class Parser {
 
             if (table.isTerminal(topSymbol)) {
                 if (topSymbol.equals(tokenSymbol)) {
+                    actionStr = "Match '" + currentToken.lexeme + "'"; 
                     stack.pop(); 
                     
-                    // 1. NORMAL MATCH: Print normally!
                     printOnce(currentToken, false, 0);
-                    
                     topNode.data = topSymbol + " (" + currentToken.lexeme + ")";
                     
                     if (!tokenSymbol.equals("eof")) {
                         currentToken = fetchNextToken(); 
                     }
                 } else {
+                    actionStr = "Error: Expected '" + topSymbol + "'";
                     reporter.reportSyntaxError(currentToken.line, currentToken.col, 
                         "Expected '" + topSymbol + "' but found '" + currentToken.lexeme + "'");
                     
-                    // 2. ERROR (Terminal Mismatch): Wrap in error tag!
                     printOnce(currentToken, true, reporter.getErrorCount());
-                    
                     stack.pop(); 
                 }
             } 
@@ -145,10 +160,10 @@ public class Parser {
                 String[] rhs = table.getRule(topSymbol, tokenSymbol);
                 
                 if (rhs == null) {
+                    actionStr = "Error: No rule for " + topSymbol;
                     reporter.reportSyntaxError(currentToken.line, currentToken.col, 
                         "Unexpected token '" + currentToken.lexeme + "' while parsing " + topSymbol);
                     
-                    // 3. ERROR (Blank Cell): Wrap in error tag!
                     printOnce(currentToken, true, reporter.getErrorCount());
                     
                     if (!tokenSymbol.equals("eof")) {
@@ -157,6 +172,7 @@ public class Parser {
                         stack.pop(); 
                     }
                 } else {
+                    actionStr = "Predict " + topSymbol + " -> " + String.join(" ", rhs);
                     stack.pop(); 
                     Tree[] children = new Tree[rhs.length];
                     for (int i = 0; i < rhs.length; i++) {
@@ -169,16 +185,27 @@ public class Parser {
                     }
                 }
             }
+            
+            // Save the row to the trace table
+            parseTrace.add(String.format("%-4d | %-70s | %-15s | %s", step++, truncate(currentStackStr, 70), inputStr, actionStr));
         }
         
         System.out.println("\n\nParsing Complete!\n");
 
-        // ----------------------------------------------------------
+        // Print the massive Trace Table before the AST
+        System.out.println("=======================================================================================================================");
+        System.out.println("                                               LL(1) PARSE TRACE                                                       ");
+        System.out.println("=======================================================================================================================");
+        System.out.printf("%-4s | %-70s | %-15s | %s\n", "STEP", "STACK (Top -> Bottom)", "INPUT", "ACTION");
+        System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+        for (String row : parseTrace) {
+            System.out.println(row);
+        }
+        System.out.println("=======================================================================================================================\n");
+
         // POST-PROCESS: Convert the concrete parse tree into an AST
-        // by pruning all passthrough / noise nodes.
-        // ----------------------------------------------------------
         Tree ast = toAST(root);
-        if (ast == null) ast = new Tree("PROGRAM"); // safety fallback
+        if (ast == null) ast = new Tree("PROGRAM"); 
 
         // ONLY draw the AST window if there are absolutely no errors!
         if (!reporter.hasErrors()) {
@@ -198,7 +225,7 @@ public class Parser {
 
         String rawLabel = rawLabel(node.data);
 
-        java.util.List<Tree> astChildren = new java.util.ArrayList<>();
+        List<Tree> astChildren = new ArrayList<>();
         for (Object childObj : node.children) {
             Tree child = (Tree) childObj;
             Tree astChild = toAST(child);
@@ -210,7 +237,7 @@ public class Parser {
         boolean isPassthrough = isPassthrough(rawLabel);
 
         if (isPassthrough) {
-            if (astChildren.size() == 0) {
+            if (astChildren.isEmpty()) {
                 return null;          
             } else if (astChildren.size() == 1) {
                 return astChildren.get(0); 
@@ -242,12 +269,15 @@ public class Parser {
         return tokenName.replaceAll("[<>]", ""); 
     }
 
+    // ---------------------------------------------------------------
+    // DISPLAY UTILITIES
+    // ---------------------------------------------------------------
     private void printOnce(Token token, boolean asError, int errNum) {
         // If we already printed this exact token, or it's an EOF, skip it!
         if (token == lastPrintedToken || token.tokenName.equals("[EOF]") || token.tokenName.equals("eof")) {
             return;
         }
-        lastPrintedToken = token; // Remember this token
+        lastPrintedToken = token; 
 
         if (currentPrintLine != -1 && token.line > currentPrintLine) {
             System.out.println(); 
@@ -274,5 +304,20 @@ public class Parser {
         } else {
             System.out.print(formattedStr + " ");
         }
+    }
+
+    // Converts the Stack into a clean string (Top of stack on the left)
+    private String getStackString(Stack<Tree> stack) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = stack.size() - 1; i >= 0; i--) {
+            sb.append(rawLabel(stack.get(i).data)).append(" ");
+        }
+        return sb.toString().trim();
+    }
+
+    // Prevents massive stacks from breaking the table layout
+    private String truncate(String str, int len) {
+        if (str.length() <= len) return str;
+        return str.substring(0, len - 3) + "...";
     }
 }
