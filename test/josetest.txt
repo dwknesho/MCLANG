@@ -1,0 +1,47 @@
+ORDER_START
+
+!! Simple Calculator
+PRICE num1;
+PRICE num2;
+PRICE result;
+RECIPE operation;
+
+SERVE "Enter first number: ";
+ORDER num1;
+
+SERVE "Enter second number: ";
+ORDER num2;
+
+SERVE "Enter operation (add, sub, mul, div): ";
+ORDER operation;
+
+WANT (operation == "add") {
+    result = num1 + num2;
+    SERVE "Result: ";
+    SERVE result;
+}
+SIDE (operation == "sub") {
+    result = num1 - num2;
+    SERVE "Result: ";
+    SERVE result;
+}
+SIDE (operation == "mul") {
+    result = num1 * num2;
+    SERVE "Result: ";
+    SERVE result;
+}
+SIDE (operation == "div") {
+    WANT (num2 == 0) {
+        SERVE "Error: Cannot divide by zero!";
+    }
+    ONLY {
+        result = num1 / num2;
+        SERVE "Result: ";
+        SERVE result;
+    }
+}
+ONLY {
+    SERVE "Unknown operation!";
+}
+
+ORDER_END

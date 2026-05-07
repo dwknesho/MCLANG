@@ -79,11 +79,11 @@ public class Parser {
                 Token t = scanner.getNextToken();
 
                 // Add Identifiers to the Symbol Table
-                if (t != null && t.tokenName.equals("<id>")) {
-                    if (symTable.getAttributes(t.lexeme) == null) {
-                        symTable.declareVariable(t.lexeme, "Pending Phase 4");
-                    }
-                }
+               // if (t != null && t.tokenName.equals("<id>")) {
+                //    if (symTable.getAttributes(t.lexeme) == null) {
+               //         symTable.declareVariable(t.lexeme, "Pending Phase 4");
+               //     }
+              //  }
                 
                 return t;
             } catch (LexicalException le) {
@@ -212,6 +212,93 @@ public class Parser {
             System.out.println("[!] Syntax or Lexical errors detected. AST visualization skipped.\n");
         }
     }
+    
+   public grtree.Tree parseAndReturn() throws Exception {
+    Stack<grtree.Tree> stack = new Stack<>();
+    grtree.Tree root = new grtree.Tree("PROGRAM");
+ 
+    stack.push(new grtree.Tree("eof"));
+    stack.push(root);
+ 
+    System.out.println("\nStarting Syntax Analysis...\n");
+    lexer.Token currentToken = fetchNextToken();
+ 
+    int step = 1;
+    java.util.List<String> parseTrace = new java.util.ArrayList<>();
+ 
+    while (!stack.isEmpty()) {
+        grtree.Tree topNode   = stack.peek();
+        String      topSymbol = topNode.data;
+ 
+        String currentStackStr = getStackString(stack);
+        String inputStr = currentToken.lexeme;
+        if (inputStr.isEmpty() && (currentToken.tokenName.equals("eof") || currentToken.tokenName.equals("[EOF]"))) {
+            inputStr = "EOF";
+        }
+        String actionStr = "";
+ 
+        if (topSymbol.equals("ε")) {
+            actionStr = "Pop ε";
+            stack.pop();
+            parseTrace.add(String.format("%-4d | %-70s | %-15s | %s", step++, truncate(currentStackStr, 70), inputStr, actionStr));
+            continue;
+        }
+ 
+        String tokenSymbol = normalizeToken(currentToken.tokenName);
+ 
+        if (table.isTerminal(topSymbol)) {
+            if (topSymbol.equals(tokenSymbol)) {
+                actionStr = "Match '" + currentToken.lexeme + "'";
+                stack.pop();
+                printOnce(currentToken, false, 0);
+                topNode.data = topSymbol + " (" + currentToken.lexeme + ")";
+                if (!tokenSymbol.equals("eof")) currentToken = fetchNextToken();
+            } else {
+                actionStr = "Error: Expected '" + topSymbol + "'";
+                reporter.reportSyntaxError(currentToken.line, currentToken.col,
+                    "Expected '" + topSymbol + "' but found '" + currentToken.lexeme + "'");
+                printOnce(currentToken, true, reporter.getErrorCount());
+                stack.pop();
+            }
+        } else {
+            String[] rhs = table.getRule(topSymbol, tokenSymbol);
+            if (rhs == null) {
+                actionStr = "Error: No rule for " + topSymbol;
+                reporter.reportSyntaxError(currentToken.line, currentToken.col,
+                    "Unexpected token '" + currentToken.lexeme + "' while parsing " + topSymbol);
+                printOnce(currentToken, true, reporter.getErrorCount());
+                if (!tokenSymbol.equals("eof")) currentToken = fetchNextToken();
+                else stack.pop();
+            } else {
+                actionStr = "Predict " + topSymbol + " -> " + String.join(" ", rhs);
+                stack.pop();
+                grtree.Tree[] children = new grtree.Tree[rhs.length];
+                for (int i = 0; i < rhs.length; i++) {
+                    children[i] = new grtree.Tree(rhs[i]);
+                    topNode.addChild(children[i]);
+                }
+                for (int i = rhs.length - 1; i >= 0; i--) stack.push(children[i]);
+            }
+        }
+        parseTrace.add(String.format("%-4d | %-70s | %-15s | %s", step++, truncate(currentStackStr, 70), inputStr, actionStr));
+    }
+ 
+    System.out.println("\n\nParsing Complete!\n");
+ 
+    // Print trace table
+    System.out.println("=======================================================================================================================");
+    System.out.println("                                           LL(1) PARSE TRACE");
+    System.out.println("=======================================================================================================================");
+    System.out.printf("%-4s | %-70s | %-15s | %s\n", "STEP", "STACK (Top -> Bottom)", "INPUT", "ACTION");
+    System.out.println("-----------------------------------------------------------------------------------------------------------------------");
+    for (String row : parseTrace) System.out.println(row);
+    System.out.println("=======================================================================================================================\n");
+ 
+    // Build and return the AST
+    grtree.Tree ast = toAST(root);
+    if (ast == null) ast = new grtree.Tree("PROGRAM");
+    return ast;
+}
       // Recursively converts the concrete parse tree into an AST by removing all the passthrough nodes defined in PASSTHROUGH_NODES.
     private Tree toAST(Tree node) {
         if (node == null) return null;

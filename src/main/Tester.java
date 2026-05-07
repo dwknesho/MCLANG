@@ -1,38 +1,63 @@
 package main;
 
-import lexer.Scanner; 
+import lexer.Scanner;
 import parser.ParseTable;
 import parser.Parser;
+import semantic.Interpreter;
 import semantic.SymbolTable;
 import errors.ErrorReporter;
 
+// Tester is the entry point for Phase 4.
+// It runs the full pipeline: scan -> parse -> print tree -> interpret
 public class Tester {
     public static void main(String[] args) {
-        String codePath = "test/program1.txt"; 
-        String csvPath = "src/parser/LL1_PARSE_FINAL.csv"; 
+
+        String codePath = "test/josetest.txt";
+        String csvPath  = "src/parser/LL1_PARSE_FINAL.csv";
 
         try {
-            System.out.println("\n\n\nInitializing Program...");
-                 // Build all the components the parser depends on
+            System.out.println("\n===================================================");
+            System.out.println("         MCLANG INTERPRETER  -  Phase 4            ");
+            System.out.println("===================================================\n");
+
             ErrorReporter reporter = new ErrorReporter();
-            Scanner scanner = new Scanner(codePath);
-            SymbolTable symTable = new SymbolTable(); // 1. Create the Symbol Table
-             // Load the LL(1) table from the CSV
-            ParseTable table = new ParseTable();
+            Scanner       scanner  = new Scanner(codePath);
+            SymbolTable   symTable = new SymbolTable();
+            ParseTable    table    = new ParseTable();
+
             table.loadCSV(csvPath);
-            System.out.println("\n\n\nParse Table Loaded Successfully.");
+            System.out.println("Parse table loaded: " + csvPath);
+            System.out.println("Source file:        " + codePath + "\n");
 
-            // 2. Pass the Symbol Table into the Parser
+            // --- Phase 3: Parse and build AST ---
             Parser parser = new Parser(scanner, table, reporter, symTable);
-            parser.parse();
+            grtree.Tree ast = parser.parseAndReturn(); // returns the AST root
 
-            // 3. Print the Errors AND the Symbol Table at the end!
+            // Print the tree in text form (requirement: tester prints the tree)
+            System.out.println("=== PARSE TREE (text form) ===");
+            System.out.println(ast.toString());
+
+            // Print any lexical / syntax errors collected during parsing
             reporter.printSummary();
+
+            // Stop here if there were parse errors — the tree may be malformed
+            if (reporter.hasErrors()) {
+                System.out.println("[!] Parse errors found. Interpretation skipped.\n");
+                symTable.printTable();
+                return;
+            }
+
+            // --- Phase 4: Interpret the AST ---
+            System.out.println("=== EXECUTION OUTPUT ===\n");
+            Interpreter interpreter = new Interpreter(symTable);
+            interpreter.interpret(ast);
+
+            // Show the final state of the symbol table
             symTable.printTable();
 
         } catch (Exception e) {
-            System.err.println("Fatal System Error: " + e.getMessage());
-            e.printStackTrace(); 
+            System.err.println("Fatal Error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
