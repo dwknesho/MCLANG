@@ -1,6 +1,65 @@
 ORDER_START
-    PRICE count = 5;
-    WANT (count > 0){
-        SERVE count;
+
+    !* McLang Interactive Calculator 
+       Supports Addition, Subtraction, Multiplication, and Division
+    *!
+    
+    PRICE num1;
+    PRICE num2;
+    PRICE choice;
+    PRICE result;
+    QUALITY keepRunning = FRESH;
+
+    SERVE "=== McLang Calculator ===";
+
+    !! Keep running until the user chooses 0
+    REFILL (keepRunning == FRESH) {
+        
+        SERVE "\nOptions: 1=Add, 2=Subtract, 3=Multiply, 4=Divide, 0=Exit";
+        SERVE "Enter choice: ";
+        ORDER choice;
+
+        WANT (choice == 0) {
+            keepRunning = EXPIRED;
+            SERVE "Exiting calculator. Goodbye!";
+        } ONLY {
+            !! Get the two numbers from the user
+            SERVE "Enter first number: ";
+            ORDER num1;
+            SERVE "Enter second number: ";
+            ORDER num2;
+
+            !! Process the math operation
+            MENU (choice) {
+                FOOD 1:
+                    result = num1 + num2;
+                    SERVE "Result: " + result;
+                    DONE;
+                
+                FOOD 2:
+                    result = num1 - num2;
+                    SERVE "Result: " + result;
+                    DONE;
+                
+                FOOD 3:
+                    result = num1 * num2;
+                    SERVE "Result: " + result;
+                    DONE;
+                
+                FOOD 4:
+                    !! Prevent Division by Zero
+                    WANT (num2 == 0) {
+                        SERVE "Error: Cannot divide by zero!";
+                    } ONLY {
+                        result = num1 / num2;
+                        SERVE "Result: " + result;
+                    }
+                    DONE;
+                
+                SOLDOUT:
+                    SERVE "Invalid choice. Please select 1, 2, 3, 4, or 0.";
+            }
+        }
     }
+
 ORDER_END

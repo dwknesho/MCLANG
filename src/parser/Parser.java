@@ -72,20 +72,13 @@ public class Parser {
         this.reporter = reporter;
         this.symTable = symTable;
     }
-     //Keeps asking the scanner for the next token until it gets a valid one.
+
+    // Keeps asking the scanner for the next token until it gets a valid one.
     private Token fetchNextToken() {
         while (true) {
             try {
-                Token t = scanner.getNextToken();
-
-                // Add Identifiers to the Symbol Table
-                if (t != null && t.tokenName.equals("<id>")) {
-                    if (symTable.getAttributes(t.lexeme) == null) {
-                        symTable.declareVariable(t.lexeme, "Pending Phase 4");
-                    }
-                }
-                
-                return t;
+                // PHASE 4 UPDATE: Removed the temporary Symbol Table logic here.
+                return scanner.getNextToken();
             } catch (LexicalException le) {
                 reporter.reportLexicalError(le.line, le.col, le.getMessage(), le.lexeme);
                 // Print Lexical Error inline
@@ -95,8 +88,9 @@ public class Parser {
             }
         }
     }
-      //Is the main LL(1) parsing loop. It works like a stack machine
-    public void parse() throws Exception {
+
+    // PHASE 4 UPDATE: Changed return type from void to Tree
+    public Tree parse() throws Exception {
         Stack<Tree> stack = new Stack<>();
         Tree root = new Tree("PROGRAM"); 
          // Push in reverse order: eof goes on first (bottom), PROGRAM on top
@@ -211,8 +205,12 @@ public class Parser {
         } else {
             System.out.println("[!] Syntax or Lexical errors detected. AST visualization skipped.\n");
         }
+
+        // PHASE 4 UPDATE: Return the fully built AST to the Tester so the Interpreter can run it!
+        return ast;
     }
-      // Recursively converts the concrete parse tree into an AST by removing all the passthrough nodes defined in PASSTHROUGH_NODES.
+
+    // Recursively converts the concrete parse tree into an AST by removing all the passthrough nodes defined in PASSTHROUGH_NODES.
     private Tree toAST(Tree node) {
         if (node == null) return null;
 
@@ -241,9 +239,18 @@ public class Parser {
         for (Tree c : astChildren) {
             astNode.addChild(c);
         }
+
+        if (rawLabel.equals("STATEMENT") && !astChildren.isEmpty()) {
+            Tree firstChild = astChildren.get(0);
+            if (rawLabel(firstChild.data).equals("id")) {
+                astNode.data = "ASSIGNMENT_STMT";
+            }
+        }
+        
         return astNode;
     }
-   // Checks if a label is in our passthrough set.
+
+    // Checks if a label is in our passthrough set.
     private boolean isPassthrough(String rawLabel) {
         if (PASSTHROUGH_NODES.contains(rawLabel)) return true;
         for (String p : PASSTHROUGH_NODES) {
