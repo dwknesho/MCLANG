@@ -1,16 +1,11 @@
 package interpreter;
 
-import grtree.Tree;
-import semantic.SymbolTable;
 import errors.InterpreterExceptions;
-
+import grtree.Tree;
 import java.util.Scanner;
+import semantic.SymbolTable;
 
-/**
- * Executes imperative statements:
- * variable declarations, assignments (scalar and array),
- * ORDER/SERVE (input/output), and REFILL/PREP/STIR (while/for/do-while) loops.
- */
+//Executes imperative statements
 public class StatementExecutor {
     private final SymbolTable symTable;
     private final ExpressionEvaluator evaluator;
@@ -302,11 +297,21 @@ public class StatementExecutor {
             double cv      = (Double) (isArray ? getArrayValue(varName, index) : symTable.getAttributes(varName).value);
             double result  = 0;
             switch (exactOp) {
-                case "assign_add": result = cv + rhs; break;
-                case "assign_min": result = cv - rhs; break;
-                case "assign_mul": result = cv * rhs; break;
-                case "assign_div": result = cv / rhs; break;
-                case "assign_mod": result = cv % rhs; break;
+                case "assign_add": 
+                result = cv + rhs; 
+                break;
+                case "assign_min": 
+                result = cv - rhs; 
+                break;
+                case "assign_mul": 
+                result = cv * rhs; 
+                break;
+                case "assign_div": 
+                result = cv / rhs; 
+                break;
+                case "assign_mod": 
+                result = cv % rhs; 
+                break;
             }
             if (isArray) symTable.assignArrayValue(varName, index, result);
             else         symTable.assignValue(varName, result);
@@ -325,10 +330,14 @@ public class StatementExecutor {
 
     public String mapDataType(String tokenType) {
         switch (tokenType) {
-            case "num_type":    return "PRICE";
-            case "string_type": return "RECIPE";
-            case "bool_type":   return "QUALITY";
-            default:            return "EMPTY";
+            case "num_type":    
+            return "PRICE";
+            case "string_type": 
+            return "RECIPE";
+            case "bool_type":   
+            return "QUALITY";
+            default:            
+            return "EMPTY";
         }
     }
 

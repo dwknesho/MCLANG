@@ -1,14 +1,12 @@
 package interpreter;
 
+import errors.InterpreterExceptions;
 import grtree.Tree;
 import semantic.SymbolTable;
-import errors.InterpreterExceptions;
 
-/**
- * Executes conditional and exception-handling statements:
- * WANT/SIDE/ONLY (if/elseif/else), MENU/FOOD/SOLDOUT (switch/case/default),
- * CHECK/HANDLE/CLEAN (try/catch/finally), SPILL (throw), YIELD (return).
- */
+
+//Executes conditional and exception-handling statements
+ 
 public class ControlFlowExecutor {
     private final SymbolTable symTable;
     private final ExpressionEvaluator evaluator;

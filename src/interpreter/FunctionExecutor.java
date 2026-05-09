@@ -1,19 +1,16 @@
 package interpreter;
 
-import grtree.Tree;
-import semantic.MCLangFunction;
-import semantic.SymbolTable;
 import errors.InterpreterExceptions;
-
+import grtree.Tree;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import semantic.MCLangFunction;
+import semantic.SymbolTable;
 
-/**
- * Handles TASK (function) declarations, parameter binding, and call execution.
- * Manages the function registry and call stack scoping.
- */
+// Handles TASK (function) declarations, parameter binding, and call execution.
+
 public class FunctionExecutor {
     private final SymbolTable symTable;
     private final Map<String, MCLangFunction> functions = new HashMap<>();

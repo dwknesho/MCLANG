@@ -15,10 +15,15 @@ public class ExpressionEvaluator {
     public Object evaluate(Tree node) {
         if (node == null) return null;
         String label = rawLabel(node.data);
-
+        // Binary expression chains
         switch(label) {
-            case "EXPRESSION": case "LOGIC_OR": case "LOGIC_AND": case "EQUALITY":
-            case "RELATIONAL": case "ADDITIVE": case "MULTIPLICATIVE":
+            case "EXPRESSION": 
+            case "LOGIC_OR": 
+            case "LOGIC_AND": 
+            case "EQUALITY":
+            case "RELATIONAL": 
+            case "ADDITIVE": 
+            case "MULTIPLICATIVE":
                 Object leftVal = evaluate((Tree) node.children.get(0));
                 
                 // Safely check for prime nodes and ignore empty epsilon (ε) nodes
@@ -29,12 +34,12 @@ public class ExpressionEvaluator {
                     }
                 }
                 return leftVal;
-
+            // Unary: either operator + operand (2 children) or just pass through (1 child)    
             case "UNARY":
                 if (node.children.size() == 2) { 
                     return applyUnary(rawLabel(((Tree) node.children.get(0)).data), evaluate((Tree) node.children.get(1)));
                 } else return evaluate((Tree) node.children.get(0));
-
+             // PRIMARY: the base value    
             case "PRIMARY":
                 Tree firstChild = (Tree) node.children.get(0);
                 String firstLabel = rawLabel(firstChild.data);
@@ -55,7 +60,7 @@ public class ExpressionEvaluator {
                     return interpreter.executeFunctionCall(extractLexeme(((Tree)firstChild.children.get(0)).data), (Tree)firstChild.children.get(2));
                 }
                 break;
-
+             // LITERAL: unwrap the actual value — number, string, or boolean   
             case "LITERAL":
                 Tree litChild = (Tree) node.children.get(0);
                 String litType = rawLabel(litChild.data);
@@ -68,10 +73,11 @@ public class ExpressionEvaluator {
                 break;
         }
 
-        if (node.children.size() == 1) return evaluate((Tree) node.children.get(0));
+        if (node.children.size() == 1) 
+            return evaluate((Tree) node.children.get(0));
         throw new RuntimeException("Interpreter Error: Unrecognized expression node: " + label);
     }
-
+    // Handles chained binary operators
     private Object evaluatePrime(Tree node, Object leftVal) {
         if (node == null || node.children.isEmpty() || rawLabel(node.data).equals("ε")) return leftVal;
 
@@ -85,7 +91,7 @@ public class ExpressionEvaluator {
         }
         return currentResult;
     }
-
+    // Handles what comes after an identifier
     private Object evaluatePrimaryPrime(Tree primeNode, String varName) {
         if (primeNode == null || primeNode.children.isEmpty() || rawLabel(primeNode.data).equals("ε")) {
             return getVariableValue(varName);
@@ -111,7 +117,7 @@ public class ExpressionEvaluator {
 
         return interpreter.executeFunctionCall(varName, primeNode);
     }
-
+     // Reads a variable
     private Object getVariableValue(String varName) {
         if (interpreter.hasFunction(varName)) return interpreter.executeFunctionCall(varName, null);
         
@@ -129,39 +135,76 @@ public class ExpressionEvaluator {
         if (index < 0 || index >= attr.size) throw new RuntimeException("Runtime Error: Index " + index + " out of bounds for '" + varName + "'.");
         return attr.arrayValues[index];
     }
-
+    // Applies a binary operator to two already-evaluated values
     private Object applyBinary(String op, Object left, Object right) {
         switch(op) {
-            case "arith_mul": requirePrice(left, right, "*"); return (Double) left * (Double) right;
-            case "arith_div": requirePrice(left, right, "/"); if ((Double) right == 0.0) throw new RuntimeException("Runtime Error: Division by zero."); return (Double) left / (Double) right;
-            case "arith_mod": requirePrice(left, right, "%"); if ((Double) right == 0.0) throw new RuntimeException("Runtime Error: Modulo by zero."); return (Double) left % (Double) right;
+            case "arith_mul": requirePrice(left, right, "*");
+             return (Double) left * (Double) right;
+            case "arith_div": requirePrice(left, right, "/"); 
+            if ((Double) right == 0.0) throw new RuntimeException("Runtime Error: Division by zero."); 
+                return (Double) left / (Double) right;
+            case "arith_mod": requirePrice(left, right, "%"); 
+            if ((Double) right == 0.0) 
+                throw new RuntimeException("Runtime Error: Modulo by zero."); 
+            return (Double) left % (Double) right;
             case "arith_add":
                 if (left instanceof String || right instanceof String) return left.toString() + right.toString(); 
-                requirePrice(left, right, "+"); return (Double) left + (Double) right;
-            case "arith_sub": requirePrice(left, right, "-"); return (Double) left - (Double) right;
-            case "rel_ls": requirePrice(left, right, "<"); return (Double) left < (Double) right;
-            case "rel_lse": requirePrice(left, right, "<="); return (Double) left <= (Double) right;
-            case "rel_gt": requirePrice(left, right, ">"); return (Double) left > (Double) right;
-            case "rel_gte": requirePrice(left, right, ">="); return (Double) left >= (Double) right;
-            case "rel_eq": requireSameType(left, right, "=="); return left.equals(right);
-            case "rel_neq": requireSameType(left, right, "!="); return !left.equals(right);
-            case "log_and": requireQuality(left, right, "&&"); return (Boolean) left && (Boolean) right;
-            case "log_or": requireQuality(left, right, "||"); return (Boolean) left || (Boolean) right;
+                requirePrice(left, right, "+"); 
+                return (Double) left + (Double) right;
+            case "arith_sub": requirePrice(left, right, "-"); 
+            return (Double) left - (Double) right;
+            case "rel_ls": requirePrice(left, right, "<"); 
+            return (Double) left < (Double) right;
+            case "rel_lse": requirePrice(left, right, "<="); 
+            return (Double) left <= (Double) right;
+            case "rel_gt": requirePrice(left, right, ">"); 
+            return (Double) left > (Double) right;
+            case "rel_gte": requirePrice(left, right, ">="); 
+            return (Double) left >= (Double) right;
+            case "rel_eq": requireSameType(left, right, "=="); 
+            return left.equals(right);
+            case "rel_neq": requireSameType(left, right, "!="); 
+            return !left.equals(right);
+            case "log_and": requireQuality(left, right, "&&"); 
+            return (Boolean) left && (Boolean) right;
+            case "log_or": requireQuality(left, right, "||");
+             return (Boolean) left || (Boolean) right;
             default: throw new RuntimeException("Interpreter Error: Unknown operator " + op);
         }
     }
-
+     // Applies a unary operator
     private Object applyUnary(String op, Object operand) {
-        if (op.equals("log_not")) { if (!(operand instanceof Boolean)) throw new RuntimeException("Semantic Error: '!' requires QUALITY."); return !((Boolean) operand); }
-        if (op.equals("arith_sub")) { if (!(operand instanceof Double)) throw new RuntimeException("Semantic Error: Unary '-' requires PRICE."); return -((Double) operand); }
-        if (op.equals("arith_add")) { if (!(operand instanceof Double)) throw new RuntimeException("Semantic Error: Unary '+' requires PRICE."); return (Double) operand; }
+        if (op.equals("log_not")) { if (!(operand instanceof Boolean)) 
+            throw new RuntimeException("Semantic Error: '!' requires QUALITY."); return !((Boolean) operand); }
+        if (op.equals("arith_sub")) { if (!(operand instanceof Double)) 
+            throw new RuntimeException("Semantic Error: Unary '-' requires PRICE."); return -((Double) operand); }
+        if (op.equals("arith_add")) { if (!(operand instanceof Double)) 
+            throw new RuntimeException("Semantic Error: Unary '+' requires PRICE."); return (Double) operand; }
         throw new RuntimeException("Interpreter Error: Unknown unary operator " + op);
     }
-
-    private void requirePrice(Object left, Object right, String op) { if (!(left instanceof Double) || !(right instanceof Double)) throw new RuntimeException("Semantic Error: Operator '" + op + "' requires PRICE operands."); }
-    private void requireQuality(Object left, Object right, String op) { if (!(left instanceof Boolean) || !(right instanceof Boolean)) throw new RuntimeException("Semantic Error: Operator '" + op + "' requires QUALITY operands."); }
-    private void requireSameType(Object left, Object right, String op) { if (left.getClass() != right.getClass()) throw new RuntimeException("Semantic Error: Operator '" + op + "' requires operands of the exact same data type."); }
-    private String rawLabel(String data) { int idx = data.indexOf(" ("); return idx >= 0 ? data.substring(0, idx).trim() : data.trim(); }
+     // throw a clear error if operand types don't match the operator
+    private void requirePrice(Object left, Object right, String op) 
+     { 
+        if (!(left instanceof Double) || !(right instanceof Double)) 
+            throw new RuntimeException("Semantic Error: Operator '" + op + "' requires PRICE operands."); 
+        }
+    private void requireQuality(Object left, Object right, String op) 
+    { 
+        if (!(left instanceof Boolean) || !(right instanceof Boolean)) 
+            throw new RuntimeException("Semantic Error: Operator '" + op + "' requires QUALITY operands."); 
+        }
+    private void requireSameType(Object left, Object right, String op) 
+    { 
+        if (left.getClass() != right.getClass()) 
+            throw new RuntimeException("Semantic Error: Operator '" + op + "' requires operands of the exact same data type."); 
+    }
+    // Strips the node label, leaving just the tag name 
+    private String rawLabel(String data) 
+    { 
+        int idx = data.indexOf(" ("); 
+        return idx >= 0 ? data.substring(0, idx).trim() : data.trim(); 
+    }
+    // Extracts the lexeme from a node label and processes escape sequences for strings
     private String extractLexeme(String data) {
         int start = data.indexOf("(");
         int end = data.lastIndexOf(")");

@@ -1,11 +1,10 @@
 package interpreter;
 
-import grtree.Tree;
-import semantic.SymbolTable;
 import errors.ErrorReporter;
 import errors.InterpreterExceptions;
-
+import grtree.Tree;
 import java.util.Scanner;
+import semantic.SymbolTable;
 
 public class Interpreter {
     private final SymbolTable         symTable;
@@ -33,7 +32,7 @@ public class Interpreter {
         this.funcExec.setInterpreter(this);
     }
 
-    //Public API 
+    
 
     // Called by Tester after a successful parse.
     public void execute(Tree ast) {
@@ -83,20 +82,37 @@ public class Interpreter {
         String stmtType   = rawLabel(actualStmt.data);
 
         switch (stmtType) {
-            case "DECLARATION_STMT": stmtExec.executeDeclaration(actualStmt);         break;
-            case "IO_STMT":          stmtExec.executeIO(actualStmt);                  break;
-            case "LOOP_STMT":        stmtExec.executeLoop(actualStmt);                break;
-
-            case "IF_STMT":          ctrlExec.executeIf(actualStmt);                  break;
-            case "SWITCH_STMT":      ctrlExec.executeSwitch(actualStmt);              break;
-            case "TRY_CATCH_STMT":   ctrlExec.executeTryCatch(actualStmt);            break;
-            case "THROW_STMT":       ctrlExec.executeThrow(actualStmt);               break;
-            case "RETURN_STMT":      ctrlExec.executeReturn(actualStmt);              break;
-
-            case "FUNCTION_DECL":    funcExec.executeFunctionDeclaration(actualStmt); break;
-
-            case "BREAK_STMT":       throw new InterpreterExceptions.BreakException();
-            case "CONTINUE_STMT":    throw new InterpreterExceptions.ContinueException();
+            case "DECLARATION_STMT": 
+                stmtExec.executeDeclaration(actualStmt);         
+                 break;
+            case "IO_STMT":          
+                stmtExec.executeIO(actualStmt);                  
+                break;
+            case "LOOP_STMT":        
+                stmtExec.executeLoop(actualStmt);                
+                break;
+            case "IF_STMT":          
+                ctrlExec.executeIf(actualStmt);                  
+                break;
+            case "SWITCH_STMT":      
+                ctrlExec.executeSwitch(actualStmt);              
+                break;
+            case "TRY_CATCH_STMT":   
+                ctrlExec.executeTryCatch(actualStmt);            
+                break;
+            case "THROW_STMT":       
+                ctrlExec.executeThrow(actualStmt);               
+                break;
+            case "RETURN_STMT":      
+                ctrlExec.executeReturn(actualStmt);              
+                break;
+            case "FUNCTION_DECL":    
+                funcExec.executeFunctionDeclaration(actualStmt); 
+                break;
+            case "BREAK_STMT":       
+                throw new InterpreterExceptions.BreakException();
+            case "CONTINUE_STMT":    
+                throw new InterpreterExceptions.ContinueException();
 
             case "id":
                 String name = extractLexeme(actualStmt.data);

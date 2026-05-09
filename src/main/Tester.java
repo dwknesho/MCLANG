@@ -1,16 +1,16 @@
 package main;
 
-import lexer.Scanner; 
+import errors.ErrorReporter; 
+import grtree.Tree;
+import interpreter.Interpreter;
+import lexer.Scanner;
 import parser.ParseTable;
 import parser.Parser;
 import semantic.SymbolTable;
-import errors.ErrorReporter;
-import interpreter.Interpreter;
-import grtree.Tree;
 
 public class Tester {
     public static void main(String[] args) {
-        String codePath = "test2/escapecharacters.txt"; 
+        String codePath = "test2/floatingpoint.txt"; 
         String csvPath = "src/parser/LL1_PARSE_FINAL.csv"; 
 
         try {
