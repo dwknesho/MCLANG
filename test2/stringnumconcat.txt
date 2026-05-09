@@ -1,0 +1,25 @@
+ORDER_START
+    PRICE score = 95;
+    PRICE passing = 60;
+    QUALITY passed = FRESH;
+    RECIPE label = "Score";
+
+    SERVE "=== Mixed Type Concatenation Test === \n";
+
+    !! String + number
+    SERVE label + ": " + score +"\n";
+
+    !! String + boolean
+    SERVE "Passed: " + passed +"\n";
+
+    !! String + expression result
+    SERVE "Double the score: " + (score * 2) +"\n";
+    SERVE "Score above passing by: " + (score - passing) +"\n";
+
+    !! Chained concatenation
+    SERVE "Result -> " + label + " = " + score + " | Passed = " + passed +"\n";
+
+    PRICE a = 3;
+    PRICE b = 4;
+    SERVE "Pythagorean: " + a + "^2 + " + b + "^2 = " + (a * a + b * b) +"\n";
+ORDER_END

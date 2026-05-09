@@ -29,7 +29,7 @@ public class StatementExecutor {
         this.interpreter = interpreter;
     }
 
-    // ─── Declaration ─────────────────────────────────────────────────────────
+    // Declaration
 
     public void executeDeclaration(Tree node) {
         String mclangType = mapDataType(rawLabel(((Tree) ((Tree) node.children.get(0)).children.get(0)).data));
@@ -52,7 +52,7 @@ public class StatementExecutor {
         }
     }
 
-    // ─── Assignment ───────────────────────────────────────────────────────────
+    // Assignment
 
     public void executeAssignment(String varName, Tree stmtPrime) {
         boolean isArray   = false;
@@ -127,7 +127,7 @@ public class StatementExecutor {
         else         symTable.assignValue(varName, result);
     }
 
-    // ─── IO  (ORDER / SERVE) ──────────────────────────────────────────────────
+    // IO  (ORDER / SERVE)
 
     public void executeIO(Tree node) {
         String ioType = rawLabel(((Tree) node.children.get(0)).data);
@@ -175,7 +175,7 @@ public class StatementExecutor {
         }
     }
 
-    // ─── Loops  (REFILL / PREP / STIR) ───────────────────────────────────────
+    // Loops  (REFILL / PREP / STIR) 
 
     public void executeLoop(Tree node) {
         Tree   actualLoop = (Tree) node.children.get(0);
@@ -313,7 +313,7 @@ public class StatementExecutor {
         }
     }
 
-    // ─── Shared helpers ───────────────────────────────────────────────────────
+    // Shared helpers
 
     private Object getArrayValue(String name, int index) {
         SymbolTable.VariableAttributes attr = symTable.getAttributes(name);

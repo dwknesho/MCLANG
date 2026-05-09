@@ -1,0 +1,32 @@
+ORDER_START
+    TASK PRICE square(PRICE n) {
+        YIELD n * n;
+    }
+
+    TASK PRICE sumOfSquares(PRICE a, PRICE b) {
+        YIELD square(a) + square(b);
+    }
+
+    TASK RECIPE describeResult(PRICE val) {
+        WANT (val > 100) {
+            YIELD "Large number";
+        } SIDE (val > 50) {
+            YIELD "Medium number";
+        } ONLY {
+            YIELD "Small number";
+        }
+    }
+
+    PRICE x;
+    PRICE y;
+    PRICE result;
+
+    SERVE "Enter x: ";
+    ORDER x;
+    SERVE "Enter y: ";
+    ORDER y;
+
+    result = sumOfSquares(x, y);
+    SERVE "Sum of squares: " + result + "\n";
+    SERVE "Description: " + describeResult(result);
+ORDER_END

@@ -25,7 +25,7 @@ public class ControlFlowExecutor {
         this.interpreter = interpreter;
     }
 
-    // ─── WANT / SIDE / ONLY  (if / elseif / else) ────────────────────────────
+    // WANT / SIDE / ONLY (if / elseif / else)
 
     public void executeIf(Tree node) {
         symTable.enterScope();
@@ -67,7 +67,7 @@ public class ControlFlowExecutor {
         }
     }
 
-    // ─── MENU / FOOD / SOLDOUT  (switch / case / default) ────────────────────
+    // MENU / FOOD / SOLDOUT (switch / case / default)
 
     public void executeSwitch(Tree node) {
         symTable.enterScope();
@@ -106,7 +106,7 @@ public class ControlFlowExecutor {
         }
     }
 
-    // ─── CHECK / HANDLE / CLEAN  (try / catch / finally) ─────────────────────
+    // CHECK / HANDLE / CLEAN  (try / catch / finally)
 
     public void executeTryCatch(Tree node) {
         Tree checkBlock   = (Tree) node.children.get(1);
@@ -146,13 +146,13 @@ public class ControlFlowExecutor {
         }
     }
 
-    // ─── SPILL (throw) ────────────────────────────────────────────────────────
+    // SPILL (throw)
 
     public void executeThrow(Tree node) {
         throw new InterpreterExceptions.SpillException(evaluator.evaluate((Tree) node.children.get(1)));
     }
 
-    // ─── YIELD (return) ───────────────────────────────────────────────────────
+    // YIELD (return) 
 
     public void executeReturn(Tree node) {
         if (node.children.size() == 1) {
@@ -162,7 +162,7 @@ public class ControlFlowExecutor {
         }
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
+    // Helpers
 
     private String rawLabel(String data) {
         int idx = data.indexOf(" (");

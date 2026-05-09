@@ -1,0 +1,21 @@
+ORDER_START
+    PRICE x = 100;
+
+    SERVE "=== Compound Assignment Test === \n";
+    SERVE "Starting value: " + x + "\n";
+
+    x += 50;
+    SERVE "After += 50: " + x + "\n";
+
+    x -= 30;
+    SERVE "After -= 30: " + x + "\n";
+
+    x *= 2;
+    SERVE "After *= 2: " + x + "\n";
+
+    x /= 4;
+    SERVE "After /= 4: " + x + "\n";
+
+    x %= 7;
+    SERVE "After %= 7: " + x + "\n";
+ORDER_END

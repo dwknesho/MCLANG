@@ -1,0 +1,35 @@
+ORDER_START
+    TASK QUALITY isEven(PRICE n) {
+        YIELD n % 2 == 0;
+    }
+
+    TASK QUALITY isPrime(PRICE n) {
+        WANT (n < 2) {
+            YIELD EXPIRED;
+        }
+        PRICE i = 2;
+        REFILL (i * i <= n) {
+            WANT (n % i == 0) {
+                YIELD EXPIRED;
+            }
+            i++;
+        }
+        YIELD FRESH;
+    }
+
+    PRICE num;
+    SERVE "Enter a number: ";
+    ORDER num;
+
+    WANT (isEven(num)) {
+        SERVE num + " is even.";
+    } ONLY {
+        SERVE num + " is odd.";
+    }
+
+    WANT (isPrime(num)) {
+        SERVE num + " is prime.";
+    } ONLY {
+        SERVE num + " is not prime.";
+    }
+ORDER_END

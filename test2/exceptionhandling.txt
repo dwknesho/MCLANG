@@ -1,0 +1,22 @@
+ORDER_START
+    PRICE a;
+    PRICE b;
+    PRICE result;
+
+    SERVE "Enter numerator: ";
+    ORDER a;
+    SERVE "Enter denominator: ";
+    ORDER b;
+
+    CHECK {
+        WANT (b == 0) {
+            SPILL "Division by zero is not allowed!";
+        }
+        result = a / b;
+        SERVE "Result: " + result;
+    } HANDLE (err) {
+        SERVE "Caught error: " + err;
+    } CLEAN {
+        SERVE "Program finished safely.";
+    }
+ORDER_END

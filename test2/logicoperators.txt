@@ -1,0 +1,38 @@
+ORDER_START
+    QUALITY a = FRESH;
+    QUALITY b = EXPIRED;
+    PRICE x = 15;
+
+    SERVE "=== Logical Operators Test === \n";
+    SERVE "a = FRESH, b = EXPIRED, x = 15 \n";
+
+    WANT (a && b) {
+        SERVE "a && b: FRESH \n";
+    } ONLY {
+        SERVE "a && b: EXPIRED \n";
+    }
+
+    WANT (a || b) {
+        SERVE "a || b: FRESH \n";
+    } ONLY {
+        SERVE "a || b: EXPIRED \n";
+    }
+
+    WANT (!b) {
+        SERVE "!b: FRESH \n";
+    } ONLY {
+        SERVE "!b: EXPIRED \n";
+    }
+
+    WANT (x > 10 && x < 20) {
+        SERVE "x is between 10 and 20: FRESH \n";
+    } ONLY {
+        SERVE "x is between 10 and 20: EXPIRED \n";
+    }
+
+    WANT (x < 5 || x > 10) {
+        SERVE "x < 5 OR x > 10: FRESH \n";
+    } ONLY {
+        SERVE "x < 5 OR x > 10: EXPIRED \n";
+    }
+ORDER_END

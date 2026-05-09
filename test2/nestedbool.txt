@@ -1,0 +1,22 @@
+ORDER_START
+    TASK QUALITY isBetween(PRICE val, PRICE lo, PRICE hi) {
+        YIELD val >= lo && val <= hi;
+    }
+
+    TASK RECIPE classify(PRICE score) {
+        WANT (isBetween(score, 90, 100)) {
+            YIELD "Excellent";
+        } SIDE (isBetween(score, 75, 89)) {
+            YIELD "Good";
+        } SIDE (isBetween(score, 60, 74)) {
+            YIELD "Passing";
+        } ONLY {
+            YIELD "Failing";
+        }
+    }
+
+    PRICE score;
+    SERVE "Enter a score (0-100): ";
+    ORDER score;
+    SERVE "Result: " + classify(score);
+ORDER_END

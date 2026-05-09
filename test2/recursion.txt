@@ -1,0 +1,14 @@
+ORDER_START
+    !! Recursive factorial function
+    TASK PRICE factorial(PRICE n) {
+        WANT (n <= 1) {
+            YIELD 1;
+        }
+        YIELD n * factorial(n - 1);
+    }
+
+    PRICE num;
+    SERVE "Enter a number to get its factorial: ";
+    ORDER num;
+    SERVE "Factorial of " + num + " is: " + factorial(num);
+ORDER_END

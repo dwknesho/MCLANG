@@ -1,0 +1,44 @@
+ORDER_START
+    PRICE a = 10;
+    PRICE b = 20;
+    PRICE c = 10;
+
+    SERVE "=== Relational Operators Test === \n";
+    SERVE "a = " + a + ", b = " + b + ", c = " + c +"\n";
+
+    WANT (a < b) {
+        SERVE "a < b: FRESH \n" ;
+    } ONLY {
+        SERVE "a < b: EXPIRED \n";
+    }
+
+    WANT (a <= c) {
+        SERVE "a <= c: FRESH \n";
+    } ONLY {
+        SERVE "a <= c: EXPIRED \n";
+    }
+
+    WANT (b > a) {
+        SERVE "b > a: FRESH \n";
+    } ONLY {
+        SERVE "b > a: EXPIRED \n";
+    }
+
+    WANT (b >= c) {
+        SERVE "b >= c: FRESH \n";
+    } ONLY {
+        SERVE "b >= c: EXPIRED \n";
+    }
+
+    WANT (a == c) {
+        SERVE "a == c: FRESH \n";
+    } ONLY {
+        SERVE "a == c: EXPIRED \n";
+    }
+
+    WANT (a != b) {
+        SERVE "a != b: FRESH \n";
+    } ONLY {
+        SERVE "a != b: EXPIRED \n";
+    }
+ORDER_END

@@ -1,0 +1,26 @@
+ORDER_START
+    PRICE a = 5;
+    PRICE b = 10;
+
+    SERVE "=== Increment / Decrement Test === \n";
+    SERVE "Initial a: " + a + "\n";
+    SERVE "Initial b: " + b + "\n";
+
+    a++;
+    SERVE "After a++: " + a + "\n";
+
+    a++;
+    SERVE "After a++ again: " + a + "\n";
+
+    b--;
+    SERVE "After b--: " + b + "\n";
+
+    b--;
+    SERVE "After b-- again: " + b + "\n";
+
+    PRICE i = 0;
+    REFILL (i < 5) {
+        SERVE "i = " + i + + "\n";
+        i++;
+    }
+ORDER_END

@@ -7,18 +7,6 @@ import errors.InterpreterExceptions;
 
 import java.util.Scanner;
 
-/**
- * Entry point for the MCLang interpreter.
- *
- * This class is an orchestrator: it owns the sub-executors and routes
- * each AST node type to the right one.  All heavy lifting lives in:
- *
- *   StatementExecutor   – declarations, assignments, I/O, loops
- *   ControlFlowExecutor – if/switch/try-catch/throw/return
- *   FunctionExecutor    – TASK declarations and calls
- *   ExpressionEvaluator – expression trees → Java values
- *   InterpreterExceptions – BreakException, ContinueException, etc.
- */
 public class Interpreter {
     private final SymbolTable         symTable;
     private final ErrorReporter       reporter;
@@ -45,9 +33,9 @@ public class Interpreter {
         this.funcExec.setInterpreter(this);
     }
 
-    // ─── Public API ───────────────────────────────────────────────────────────
+    //Public API 
 
-    /** Called by Tester after a successful parse. */
+    // Called by Tester after a successful parse.
     public void execute(Tree ast) {
         System.out.println("\n--- MCLANG INTERPRETER OUTPUT ---");
         try {
@@ -60,17 +48,15 @@ public class Interpreter {
         System.out.println("---------------------------------");
     }
 
-    /** Delegated to by FunctionExecutor and ControlFlowExecutor. */
     public boolean hasFunction(String name) {
         return funcExec.hasFunction(name);
     }
 
-    /** Delegated to by FunctionExecutor. */
     public Object executeFunctionCall(String functionName, Tree argList) {
         return funcExec.executeFunctionCall(functionName, argList);
     }
 
-    // ─── Statement list / block ───────────────────────────────────────────────
+    // Statement list / block 
 
     public void executeStatementList(Tree node) {
         if (node == null || node.children.isEmpty() || rawLabel(node.data).equals("ε")) return;
@@ -87,7 +73,7 @@ public class Interpreter {
         }
     }
 
-    // ─── Statement dispatch ───────────────────────────────────────────────────
+    // Statement dispatch
 
     private void executeStatement(Tree stmtNode) {
         if (stmtNode == null || stmtNode.children.isEmpty()
@@ -130,7 +116,7 @@ public class Interpreter {
         }
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
+    // Helpers 
 
     private String rawLabel(String data) {
         int idx = data.indexOf(" (");

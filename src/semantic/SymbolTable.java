@@ -90,7 +90,7 @@ public class SymbolTable {
         currentEnv = globalEnv;
     }
 
-    // --- SCOPE MANAGEMENT FOR INTERPRETER ---
+    // SCOPE MANAGEMENT FOR INTERPRETER
     
     public void enterScope() {
         currentEnv = new Environment(currentEnv);
@@ -104,7 +104,7 @@ public class SymbolTable {
     
     public Environment getCurrentEnv() { return currentEnv; }
     
-    // --- VARIABLE MANAGEMENT ---
+    // VARIABLE MANAGEMENT 
     
     public void declareVariable(String lexeme, String dataType) {
         currentEnv.declareVariable(lexeme, dataType);
@@ -143,15 +143,11 @@ public class SymbolTable {
         return currentEnv.resolve(lexeme);
     }
 
-    // --- CRITICAL PHASE 4 METHOD ---
-    // The parser tentatively adds tokens to the symbol table. 
-    // We must call reset() before interpreting the AST so we can declare them properly at runtime.
     public void reset() {
         globalEnv = new Environment(null);
         currentEnv = globalEnv;
     }
 
-    // --- PRINTING ---
     public void printTable() {
         System.out.println("\n=====================================================================");
         System.out.println("                     SYMBOL TABLE (GLOBAL SCOPE)                     ");

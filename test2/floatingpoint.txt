@@ -1,0 +1,23 @@
+ORDER_START
+    PRICE pi = 3.14;
+    PRICE radius;
+    PRICE area;
+    PRICE negative = -2.5;
+
+    SERVE "=== Floating Point Test === \n";
+    SERVE "pi = " + pi + "\n";
+    SERVE "negative = " + negative + "\n";
+
+    SERVE "Enter radius: ";
+    ORDER radius;
+
+    area = pi * radius * radius;
+    SERVE "Area of circle: " + area + "\n";
+
+    PRICE a = 7.5;
+    PRICE b = 2.5;
+    SERVE "7.5 + 2.5 = " + (a + b) + "\n";
+    SERVE "7.5 - 2.5 = " + (a - b) + "\n";
+    SERVE "7.5 * 2.5 = " + (a * b) + "\n";
+    SERVE "7.5 / 2.5 = " + (a / b) + "\n";
+ORDER_END

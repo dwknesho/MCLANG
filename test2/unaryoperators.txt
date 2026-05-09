@@ -1,0 +1,19 @@
+ORDER_START
+    PRICE a = 5;
+    PRICE b = -10;
+    PRICE c;
+    QUALITY flag = FRESH;
+
+    c = -a;
+    SERVE "Negative of 5: " + c + "\n";
+    SERVE "Negative number b: " + b + "\n";
+
+    WANT (!flag) {
+        SERVE "Flag was false";
+    } ONLY {
+        SERVE "Flag was true";
+    }
+
+    QUALITY result = !(a > 10);
+    SERVE "!(5 > 10) = " + result;
+ORDER_END

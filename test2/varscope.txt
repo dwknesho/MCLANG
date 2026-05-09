@@ -1,0 +1,17 @@
+ORDER_START
+    PRICE x = 100;
+    RECIPE msg = "global";
+
+    SERVE "Outside block - x = " + x +"\n";
+    SERVE "Outside block - msg = " + msg + "\n";
+
+    WANT (FRESH) {
+        PRICE x = 999;
+        RECIPE msg = "local";
+        SERVE "Inside block - x = " + x + "\n";
+        SERVE "Inside block - msg = " + msg + "\n";
+    }
+
+    SERVE "Back outside - x = " + x + "\n";
+    SERVE "Back outside - msg = " + msg + "\n";
+ORDER_END

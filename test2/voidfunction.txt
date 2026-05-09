@@ -1,0 +1,19 @@
+ORDER_START
+    TASK EMPTY printBox(RECIPE msg) {
+        SERVE "====================";
+        SERVE msg;
+        SERVE "====================\n";
+    }
+
+    TASK EMPTY countdown(PRICE n) {
+        REFILL (n > 0) {
+            SERVE "Countdown: " + n +"\n";
+            n--;
+        }
+        SERVE "Blast off!";
+    }
+
+    printBox("Welcome to McLang!");
+    countdown(5);
+    printBox("Done!");
+ORDER_END

@@ -1,0 +1,33 @@
+ORDER_START
+    PRICE age;
+    PRICE income;
+
+    SERVE "=== Nested Conditionals Test === \n";
+    SERVE "Enter age: ";
+    ORDER age;
+    SERVE "Enter monthly income: ";
+    ORDER income;
+
+    WANT (age >= 18) {
+        SERVE "You are an adult.";
+        WANT (income >= 50000) {
+            SERVE "You qualify for a premium account.";
+            WANT (income >= 100000) {
+                SERVE "You qualify for VIP status!";
+            } ONLY {
+                SERVE "Standard premium membership.";
+            }
+        } SIDE (income >= 20000) {
+            SERVE "You qualify for a standard account.";
+        } ONLY {
+            SERVE "You qualify for a basic account.";
+        }
+    } ONLY {
+        SERVE "You are a minor.";
+        WANT (age >= 13) {
+            SERVE "Teen account available.";
+        } ONLY {
+            SERVE "Child account only.";
+        }
+    }
+ORDER_END

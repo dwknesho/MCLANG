@@ -1,0 +1,15 @@
+ORDER_START
+    PRICE i;
+
+    SERVE "Numbers 1-10, skipping evens, stopping at 7:";
+    PREP (i = 1; i <= 10; i++) {
+        WANT (i % 2 == 0) {
+            NEXT;
+        }
+        WANT (i == 7) {
+            SERVE "Reached 7, stopping!";
+            DONE;
+        }
+        SERVE i;
+    }
+ORDER_END

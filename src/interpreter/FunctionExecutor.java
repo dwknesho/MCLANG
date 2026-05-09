@@ -31,13 +31,13 @@ public class FunctionExecutor {
         this.interpreter = interpreter;
     }
 
-    // ─── Registry ────────────────────────────────────────────────────────────
+    // Registry
 
     public boolean hasFunction(String name) {
         return functions.containsKey(name);
     }
 
-    // ─── Declaration ─────────────────────────────────────────────────────────
+    // Declaration
 
     public void executeFunctionDeclaration(Tree node) {
         String returnType = mapDataType(rawLabel(((Tree) ((Tree) node.children.get(1)).children.get(0)).data));
@@ -62,7 +62,7 @@ public class FunctionExecutor {
         }
     }
 
-    // ─── Call Execution ───────────────────────────────────────────────────────
+    // Call Execution
 
     public Object executeFunctionCall(String functionName, Tree argList) {
         MCLangFunction func = functions.get(functionName);
@@ -135,7 +135,7 @@ public class FunctionExecutor {
         return args;
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
+    // Helpers
 
     public String mapDataType(String tokenType) {
         switch (tokenType) {

@@ -1,0 +1,31 @@
+ORDER_START
+    PRICE day;
+    SERVE "Enter day number (1-7): ";
+    ORDER day;
+
+    MENU (day) {
+        FOOD 1 :
+            SERVE "Monday";
+            DONE;
+        FOOD 2 :
+            SERVE "Tuesday";
+            DONE;
+        FOOD 3 :
+            SERVE "Wednesday";
+            DONE;
+        FOOD 4 :
+            SERVE "Thursday";
+            DONE;
+        FOOD 5 :
+            SERVE "Friday";
+            DONE;
+        FOOD 6 :
+            SERVE "Saturday";
+            DONE;
+        FOOD 7 :
+            SERVE "Sunday";
+            DONE;
+        SOLDOUT :
+            SERVE "Invalid day number!";
+    }
+ORDER_END

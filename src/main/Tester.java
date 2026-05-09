@@ -10,7 +10,7 @@ import grtree.Tree;
 
 public class Tester {
     public static void main(String[] args) {
-        String codePath = "test/new.txt"; 
+        String codePath = "test2/escapecharacters.txt"; 
         String csvPath = "src/parser/LL1_PARSE_FINAL.csv"; 
 
         try {

@@ -1,0 +1,18 @@
+ORDER_START
+    PRICE guess;
+    PRICE secret = 7;
+    PRICE tries = 0;
+
+    SERVE "Guess the secret number (1-10)!";
+
+    STIR {
+        SERVE "Enter your guess: ";
+        ORDER guess;
+        tries++;
+        WANT (guess == secret) {
+            SERVE "Correct! You got it in " + tries + " tries!";
+        } ONLY {
+            SERVE "Wrong, try again!";
+        }
+    } REFILL (guess != secret);
+ORDER_END

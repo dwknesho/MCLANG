@@ -1,0 +1,27 @@
+ORDER_START
+    PRICE nums[5];
+    PRICE i = 0;
+    PRICE min;
+    PRICE max;
+
+    SERVE "Enter 5 numbers:";
+    PREP (i = 0; i < 5; i++) {
+        SERVE "Number " + i + ": ";
+        ORDER nums[i];
+    }
+
+    min = nums[0];
+    max = nums[0];
+
+    PREP (i = 1; i < 5; i++) {
+        WANT (nums[i] < min) {
+            min = nums[i];
+        }
+        WANT (nums[i] > max) {
+            max = nums[i];
+        }
+    }
+
+    SERVE "Minimum: " + min;
+    SERVE "Maximum: " + max;
+ORDER_END

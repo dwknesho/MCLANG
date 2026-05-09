@@ -1,0 +1,15 @@
+ORDER_START
+    PRICE n;
+    PRICE sum = 0;
+    PRICE i = 1;
+
+    SERVE "Enter a number to sum from 1 to N: ";
+    ORDER n;
+
+    REFILL (i <= n) {
+        sum += i;
+        i++;
+    }
+
+    SERVE "Sum from 1 to " + n + " = " + sum;
+ORDER_END

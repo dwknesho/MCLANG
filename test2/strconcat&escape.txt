@@ -1,0 +1,17 @@
+ORDER_START
+    RECIPE firstName;
+    RECIPE lastName;
+    RECIPE fullName;
+
+    SERVE "Enter first name: ";
+    ORDER firstName;
+    SERVE "Enter last name: ";
+    ORDER lastName;
+
+    fullName = firstName + " " + lastName;
+
+    SERVE "Hello, " + fullName + "!";
+    SERVE "Your name has a tab here:\t[" + fullName + "]";
+    SERVE "Quoted: \"" + fullName + "\"";
+    SERVE "Newline below:\nDone!";
+ORDER_END
