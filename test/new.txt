@@ -1,6 +1,52 @@
 ORDER_START
-    PRICE count = 5;
-    WANT (count > 0){
-        SERVE count;
+
+    !* Simple McLang Calculator 
+      Tests Basic I/O, Math, and If/Else-If/Else Logic
+    *!
+    
+    PRICE num1;
+    PRICE num2;
+    PRICE op;
+    PRICE ans;
+
+    SERVE "=== Simple McLang Calculator ===\n";
+    
+    !! 1. Get the first number
+    SERVE "Enter the first number: ";
+    ORDER num1;
+
+    !! 2. Get the second number
+    SERVE "Enter the second number: ";
+    ORDER num2;
+
+    !! 3. Get the operation choice
+    SERVE "Choose operation (1 = Add, 2 = Subtract, 3 = Multiply, 4 = Divide): ";
+    ORDER op;
+
+    !! 4. Perform the Math using WANT / SIDE / ONLY
+    WANT (op == 1) {
+        ans = num1 + num2;
+        SERVE "Addition Result: " + ans;
+    } 
+    SIDE (op == 2) {
+        ans = num1 - num2;
+        SERVE "Subtraction Result: " + ans;
+    } 
+    SIDE (op == 3) {
+        ans = num1 * num2;
+        SERVE "Multiplication Result: " + ans;
+    } 
+    SIDE (op == 4) {
+        !! Nested WANT to prevent division by zero
+        WANT (num2 == 0) {
+            SERVE "Error: Cannot divide by zero!";
+        } ONLY {
+            ans = num1 / num2;
+            SERVE "Division Result: " + ans;
+        }
+    } 
+    ONLY {
+        SERVE "Error: Invalid operation choice. Please run the program again.";
     }
+
 ORDER_END
