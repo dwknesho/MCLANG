@@ -2,31 +2,77 @@ package semantic;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class SymbolTable {
-    // Map the Lexeme (Variable Name) to its Attributes (Type and Value)
-    private Map<String, VariableAttributes> table = new LinkedHashMap<>();
+    
+    // UPGRADE: A Stack of maps to handle infinite layers of nested { } blocks
+    private Stack<Map<String, VariableAttributes>> scopes;
+
+    public SymbolTable() {
+        scopes = new Stack<>();
+        // Create the Global Scope immediately when the table is created
+        enterScope(); 
+    }
+
+    // --- SCOPE MANAGEMENT ---
+
+    // Called when the interpreter hits a '{' (Start of a block)
+    public void enterScope() {
+        scopes.push(new LinkedHashMap<>());
+    }
+
+    // Called when the interpreter hits a '}' (End of a block)
+    public void exitScope() {
+        if (scopes.size() > 1) {
+            scopes.pop(); // Destroys all local variables in this block
+        }
+    }
+
+    // --- VARIABLE MANAGEMENT ---
 
     // 1. Called when a variable is declared (e.g., PRICE x;)
     public void declareVariable(String lexeme, String dataType) {
-        if (table.containsKey(lexeme)) {
-            throw new RuntimeException("Semantic Error: Variable '" + lexeme + "' is already declared!");
+        // We only check the CURRENT (top) scope to allow variable shadowing
+        Map<String, VariableAttributes> currentScope = scopes.peek();
+        
+        if (currentScope.containsKey(lexeme)) {
+            throw new RuntimeException("Semantic Error: Variable '" + lexeme + "' is already declared in this scope!");
         }
+        
         // Initialize with the data type and a null value
-        table.put(lexeme, new VariableAttributes(dataType, null));
+        currentScope.put(lexeme, new VariableAttributes(dataType, null));
     }
 
     // 2. Called when a variable is assigned a value (e.g., x = 5;)
     public void assignValue(String lexeme, Object value) {
-        if (!table.containsKey(lexeme)) {
+        Map<String, VariableAttributes> targetScope = findScopeContaining(lexeme);
+        
+        if (targetScope == null) {
             throw new RuntimeException("Semantic Error: Variable '" + lexeme + "' has not been declared!");
         }
-        table.get(lexeme).value = value;
+        targetScope.get(lexeme).value = value;
     }
 
     // 3. Look up a variable's details
     public VariableAttributes getAttributes(String lexeme) {
-        return table.get(lexeme);
+        Map<String, VariableAttributes> targetScope = findScopeContaining(lexeme);
+        
+        if (targetScope == null) {
+            throw new RuntimeException("Semantic Error: Variable '" + lexeme + "' has not been declared!");
+        }
+        return targetScope.get(lexeme);
+    }
+
+    // Searches from the innermost scope (top of stack) down to the global scope
+    private Map<String, VariableAttributes> findScopeContaining(String lexeme) {
+        for (int i = scopes.size() - 1; i >= 0; i--) {
+            Map<String, VariableAttributes> scope = scopes.get(i);
+            if (scope.containsKey(lexeme)) {
+                return scope;
+            }
+        }
+        return null; // Not found anywhere
     }
 
     // 4. Print the formatted table
@@ -36,11 +82,15 @@ public class SymbolTable {
         System.out.println("=======================================================");
         System.out.printf("%-20s | %-12s | %-15s\n", "IDENTIFIER (Lexeme)", "DATA TYPE", "VALUE");
         System.out.println("-------------------------------------------------------");
-        for (Map.Entry<String, VariableAttributes> entry : table.entrySet()) {
-            System.out.printf("%-20s | %-12s | %-15s\n", 
-                entry.getKey(), 
-                entry.getValue().dataType, 
-                entry.getValue().value == null ? "null" : entry.getValue().value.toString());
+        
+        // Iterate through all active scopes
+        for (int i = 0; i < scopes.size(); i++) {
+            for (Map.Entry<String, VariableAttributes> entry : scopes.get(i).entrySet()) {
+                System.out.printf("%-20s | %-12s | %-15s\n", 
+                    entry.getKey(), 
+                    entry.getValue().dataType, 
+                    entry.getValue().value == null ? "null" : entry.getValue().value.toString());
+            }
         }
         System.out.println("=======================================================\n");
     }

@@ -1,0 +1,9 @@
+ORDER_START
+    PRICE n = 3;
+    REFILL (n > 0) { SERVE n; n--; }
+
+    PREP (PRICE i = 1; i <= 3; i++) { SERVE i; }
+
+    PRICE k = 0;
+    STIR { SERVE k; k++; } REFILL (k < 3);
+ORDER_END

@@ -1,0 +1,11 @@
+ORDER_START
+    TASK PRICE add(PRICE x, PRICE y) { YIELD x + y; }
+
+    TASK QUALITY isPos(PRICE n) { YIELD n > 0; }
+
+    TASK EMPTY greet(RECIPE name) { SERVE "Hi " + name; }
+
+    SERVE add(3, 4);
+    SERVE isPos(-1);
+    greet("Ben");
+ORDER_END

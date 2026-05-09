@@ -4,30 +4,43 @@ import lexer.Scanner;
 import parser.ParseTable;
 import parser.Parser;
 import semantic.SymbolTable;
+import semantic.Interpreter; 
+import grtree.Tree;          
 import errors.ErrorReporter;
 
 public class Tester {
     public static void main(String[] args) {
-        String codePath = "test/program1.txt"; 
+        String codePath = "test/program1.txt";  // <-- Change this to test other files!
         String csvPath = "src/parser/LL1_PARSE_FINAL.csv"; 
 
         try {
-            System.out.println("\n\n\nInitializing Program...");
-                 // Build all the components the parser depends on
+            System.out.println("\n\n\n=======================================================");
+            System.out.println(">>> ACTIVELY RUNNING FILE: " + codePath + " <<<");
+            System.out.println("=======================================================\n");
+            
+            System.out.println("Initializing Program...");
             ErrorReporter reporter = new ErrorReporter();
             Scanner scanner = new Scanner(codePath);
-            SymbolTable symTable = new SymbolTable(); // 1. Create the Symbol Table
-             // Load the LL(1) table from the CSV
+            
+            SymbolTable symTable = new SymbolTable(); 
+            
             ParseTable table = new ParseTable();
             table.loadCSV(csvPath);
-            System.out.println("\n\n\nParse Table Loaded Successfully.");
+            System.out.println("Parse Table Loaded Successfully.");
 
-            // 2. Pass the Symbol Table into the Parser
-            Parser parser = new Parser(scanner, table, reporter, symTable);
-            parser.parse();
+            Parser parser = new Parser(scanner, table, reporter);
+            Tree ast = parser.parse(); 
 
-            // 3. Print the Errors AND the Symbol Table at the end!
             reporter.printSummary();
+
+            // --- PHASE 4: EXECUTE THE PROGRAM ---
+            if (!reporter.hasErrors()) {
+                Interpreter interpreter = new Interpreter(symTable);
+                interpreter.execute(ast); 
+            } else {
+                System.out.println("\n[!] Execution skipped due to syntax errors.");
+            }
+
             symTable.printTable();
 
         } catch (Exception e) {

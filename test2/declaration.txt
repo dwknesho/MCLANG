@@ -1,0 +1,4 @@
+ORDER_START
+    PRICE a = 3.14;
+    PRICE b = -1.5;
+ORDER_END

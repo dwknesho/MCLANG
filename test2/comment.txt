@@ -1,0 +1,7 @@
+ORDER_START
+    !! Single line comment
+ 
+    !*
+       Multi line comment
+    *!
+ORDER_END

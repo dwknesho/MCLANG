@@ -34,7 +34,7 @@ string concatenation, increment/decrement, and boolean expressions *!
                     SERVE "Fries added.";
                     DONE;
                 FOOD 3 :
-                    unitPrice = 45;
+                    unitPrice = 45*unitPrice%itemCode%%total/subtotal+-73;
                     SERVE "Drink added.";
                     DONE;
                 SOLDOUT :
