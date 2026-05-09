@@ -7,7 +7,9 @@ Unary operators, Decrement,  Loop control (continue), Comparison operator
 
     !! Void procedure - no YIELD
     TASK EMPTY printBanner(RECIPE msg) {
+        SERVE "\n========================================\n  [ ";
         SERVE msg;
+        SERVE " ]\n========================================\n";
     }
 
     PRICE scores[6];
@@ -21,19 +23,26 @@ Unary operators, Decrement,  Loop control (continue), Comparison operator
 
     !! String concatenation with variables
     fullName = firstName + " " + lastName;
-    SERVE "Student: ";
+    SERVE "> Student:\t";
     SERVE fullName;
 
     !! All escape sequences: \", \\, \n, \t
-    SERVE "Path:\t\"C:\\Users\\Data\"\nEnd of path";
+    SERVE "\n> Path test:\t\"C:\\Users\\Data\"\n\t\tEnd of path\n";
 
     !! Nested loops with expression as array index
-    SERVE "\nFilling scores array...";
+    SERVE "\n> Filling scores array...\n";
     PREP (PRICE i = 0; i < 2; i++) {
+        SERVE "\t";
         PREP (PRICE j = 0; j < 3; j++) {
             scores[i * 3 + j] = (i + 1) * 10 + j;  !! Expression as index
+            
+            SERVE "[";
+            SERVE i * 3 + j;
+            SERVE "]:";
             SERVE scores[i * 3 + j];
+            SERVE "   ";
         }
+        SERVE "\n";
     }
 
     !! Compound assignment operators
@@ -41,17 +50,18 @@ Unary operators, Decrement,  Loop control (continue), Comparison operator
     total /= 2;   !! 300 / 2 = 150
     total %= 40;  !! 150 % 40 = 30
 
-    SERVE "After operations: ";
+    SERVE "\n> After operations (total): ";
     SERVE total;
 
     !! Unary operators
     result = +total;  !! Unary plus
     result = -total;  !! Unary minus (result = -30)
-    SERVE "Unary minus: ";
+    SERVE "\n> Unary minus result:       ";
     SERVE result;
+    SERVE "\n";
 
     !! Decrement and NEXT (continue)
-    SERVE "\nOdd numbers only:";
+    SERVE "\n> Odd numbers only: \n\t";
     PRICE count = 10;
     REFILL (count > 0) {
         count--;  !! Decrement
@@ -61,30 +71,34 @@ Unary operators, Decrement,  Loop control (continue), Comparison operator
         }
         
         SERVE count;
+        SERVE "  "; !! Spaces out the numbers
         
         WANT (count <= 3) {
             DONE;
         }
     }
+    SERVE "\n";
 
     !! Inequality operator
     WANT (count != 0) {
-        SERVE "Count is not zero";
+        SERVE "\n> Inequality check passed: Count is not zero.\n";
     }
 
     !! Exception with CLEAN (finally)
-    SERVE "\nTesting exception...";
+    SERVE "\n> Testing exception...\n";
     CHECK {
         WANT (total < 50) {
             SPILL "Value too low";
         }
-        SERVE "Success!";
+        SERVE "   - Success!\n";
     } HANDLE (err) {
-        SERVE "Error caught!";
+        SERVE "   - Error caught: ";
+        SERVE err;
+        SERVE "\n";
     } CLEAN {
-        SERVE "Cleanup always runs";  !! Finally block
+        SERVE "   - Cleanup always runs (Finally block executed)\n";
     }
 
-    printBanner("Done");
+    printBanner("Execution Complete");
 
 ORDER_END

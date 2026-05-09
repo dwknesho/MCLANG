@@ -1,6 +1,6 @@
 ORDER_START
 
-!*declaration, do-while, nested conditionals, 
+!* declaration, do-while, nested conditionals, 
 logical operators, increment, and boolean flags *!
 
     !! function to check how close the guess is
@@ -31,41 +31,47 @@ logical operators, increment, and boolean flags *!
     QUALITY won = EXPIRED;
     RECIPE hint;
 
-    SERVE "Number Guessing Game";
-    SERVE "Guess the number between 1 and 100.";
-    SERVE "You have 5 attempts.";
+    SERVE "\n=== Number Guessing Game ===\n";
+    SERVE "Guess the number between 1 and 100.\n";
+    SERVE "You have 5 attempts.\n";
 
     !! Do-while gives player at least one guess
     STIR {
         attempts++;
 
-        SERVE "Attempt ";
+        SERVE "\nAttempt ";
         SERVE attempts;
         SERVE " — Enter your guess: ";
         ORDER guess;
 
         hint = getHint(guess, secretNumber);
+        SERVE " > Result: ";
         SERVE hint;
+        SERVE "\n";
 
         WANT (guess == secretNumber) {
             won = FRESH;
         } SIDE (guess < secretNumber) {
-            SERVE "Hint: guess higher.";
+            SERVE " > Hint: guess higher.\n";
         } ONLY {
-            SERVE "Hint: guess lower.";
+            SERVE " > Hint: guess lower.\n";
         }
 
     } REFILL (won == EXPIRED && attempts < maxAttempts);
 
     !! final result
+    SERVE "\n============================\n";
     WANT (won == FRESH) {
-        SERVE "You won! The number was ";
+        SERVE "  You won! The number was ";
         SERVE secretNumber;
-        SERVE "Attempts used: ";
+        SERVE "\n  Attempts used: ";
         SERVE attempts;
+        SERVE "\n";
     } ONLY {
-        SERVE "Game over! The number was ";
+        SERVE "  Game over! The number was ";
         SERVE secretNumber;
+        SERVE "\n";
     }
+    SERVE "============================\n\n";
 
 ORDER_END

@@ -1,0 +1,9 @@
+ORDER_START
+    RECIPE a = "Hello";
+    RECIPE b = " World";
+    SERVE a + b;
+    SERVE "Tab:\there";
+    SERVE "Quote: \"hi\"";
+    SERVE "Path: C:\\data";
+    SERVE "Line1\nLine2";
+ORDER_END

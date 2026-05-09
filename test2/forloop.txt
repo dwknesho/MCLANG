@@ -1,0 +1,7 @@
+ORDER_START
+    PREP (PRICE i = 0; i < 10; i++) {
+        WANT (i % 2 == 0) { NEXT; }
+        WANT (i == 7)     { DONE; }
+        SERVE i;
+    }
+ORDER_END

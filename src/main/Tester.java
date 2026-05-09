@@ -5,29 +5,41 @@ import parser.ParseTable;
 import parser.Parser;
 import semantic.SymbolTable;
 import errors.ErrorReporter;
+import interpreter.Interpreter;
+import grtree.Tree;
 
 public class Tester {
     public static void main(String[] args) {
-        String codePath = "test/program1.txt"; 
+        String codePath = "test/divisionError.txt";    // Change this to test different programs!
         String csvPath = "src/parser/LL1_PARSE_FINAL.csv"; 
 
         try {
             System.out.println("\n\n\nInitializing Program...");
-                 // Build all the components the parser depends on
+            
             ErrorReporter reporter = new ErrorReporter();
             Scanner scanner = new Scanner(codePath);
-            SymbolTable symTable = new SymbolTable(); // 1. Create the Symbol Table
-             // Load the LL(1) table from the CSV
+            SymbolTable symTable = new SymbolTable(); 
+            
             ParseTable table = new ParseTable();
             table.loadCSV(csvPath);
-            System.out.println("\n\n\nParse Table Loaded Successfully.");
+            System.out.println("\nParse Table Loaded Successfully.");
 
-            // 2. Pass the Symbol Table into the Parser
+            // 1. Pass the Symbol Table into the Parser and capture the AST
             Parser parser = new Parser(scanner, table, reporter, symTable);
-            parser.parse();
+            Tree ast = parser.parse();
 
-            // 3. Print the Errors AND the Symbol Table at the end!
+            // 2. Print the compilation summary
             reporter.printSummary();
+
+            // 3. If there are no syntax errors, run the Interpreter!
+            if (!reporter.hasErrors()) {
+                symTable.reset(); // CRITICAL: Wipe parser's leftover data before running
+                
+                Interpreter interpreter = new Interpreter(symTable, reporter);
+                interpreter.execute(ast);
+            }
+
+            // 4. Print the final memory state of the Symbol Table
             symTable.printTable();
 
         } catch (Exception e) {

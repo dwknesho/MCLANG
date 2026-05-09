@@ -1,0 +1,5 @@
+ORDER_START
+    PRICE g = 1;
+    WANT (FRESH) { PRICE l = 2; SERVE l; }
+    SERVE g;
+ORDER_END

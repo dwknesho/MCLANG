@@ -1,0 +1,10 @@
+ORDER_START
+    PRICE a = 10; PRICE b = 3;
+    SERVE a + b;     
+    SERVE a % b;     
+    SERVE a * b;     
+    a += 5;  SERVE a;  
+    a++;     SERVE a;  
+    QUALITY r = a > b && !EXPIRED;
+    SERVE r;
+ORDER_END

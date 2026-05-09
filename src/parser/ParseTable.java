@@ -14,10 +14,10 @@ public class ParseTable {
     private Set<String> terminalSet = new HashSet<>();
 
     public void loadCSV(String filePath) throws IOException {
-        // Try-with-resources automatically closes 'br' no matter how the method exits!
+        
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line = br.readLine();
-            if (line == null) return; // Now this is 100% safe!
+            if (line == null) return;
 
             // 1. Extract Terminals from Header
             String[] headers = line.split(",");

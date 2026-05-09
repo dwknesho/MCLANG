@@ -1,0 +1,78 @@
+
+!! ERROR: Missing ORDER_START (Testing 3.1: Parser anchor)
+PRICE x = 10; 
+
+ORDER_START
+
+    !! --- 1. Declarations & Assignments (3.3) ---
+    PRICE = 5;             !! ERROR: Missing identifier after type
+    PRICE x = 5            !! ERROR: Missing semicolon after declaration
+    count = 10             !! ERROR: Missing semicolon after assignment
+    x++                    !! ERROR: Missing semicolon after increment
+    PRICE y == 40;         !! ERROR: Invalid assign operator (using equality instead)
+
+    !! --- 2. Input & Output (3.4) ---
+    SERVE                  !! ERROR: Missing expression after SERVE
+    ORDER                  !! ERROR: Missing L-VALUE and missing semicolon
+    SERVE "hi"             !! ERROR: Missing semicolon after SERVE
+    ORDER name             !! ERROR: Missing semicolon after ORDER
+
+    !! --- 3. Conditionals (3.5) ---
+    WANT x > 0 { }         !! ERROR: Missing ( ) around WANT condition
+    WANT (x > 0) SERVE "x";!! ERROR: Missing { } block after WANT
+    SIDE (x < 0) { }       !! ERROR: SIDE used without a preceding WANT
+    ONLY SERVE "y";        !! ERROR: ONLY missing { } block
+
+    !! --- 4. Switch Statement (3.6) ---
+    MENU choice { }        !! ERROR: Missing ( ) around MENU ID
+    MENU (choice) 
+        FOOD 1 : SERVE "a";
+    !! ERROR: Missing { } around MENU body
+    MENU (choice) {
+        FOOD : SERVE "b";  !! ERROR: Missing literal value in FOOD
+        FOOD 1 SERVE "c";  !! ERROR: Missing colon after FOOD value
+        FOOD x+1 : DONE;   !! ERROR: Non-literal (expression) in FOOD
+        SOLDOUT SERVE "d"; !! ERROR: Missing colon after SOLDOUT
+    }
+
+    !! --- 5. Loops (3.7) ---
+    REFILL x > 0 { }       !! ERROR: Missing ( ) around REFILL
+    REFILL (x > 0) SERVE "x"; !! ERROR: Missing { } block for REFILL
+    PREP (; i < 5; i++) { } !! ERROR: Missing PREP init section
+    PREP (PRICE i=0; i<5 i++) !! ERROR: Missing condition semicolon (;) and closing paren
+    PREP (PRICE i=0; i<5; ) { } !! ERROR: Missing PREP update section
+    STIR { x++; }          !! ERROR: Missing REFILL after STIR block
+    STIR { x++; } REFILL x > 0; !! ERROR: Missing ( ) around STIR condition
+    STIR { x++; } REFILL (x > 0) !! ERROR: Missing ; after STIR condition
+    DONE                   !! ERROR: Missing ; after DONE
+    NEXT                   !! ERROR: Missing ; after NEXT
+
+    !! --- 6. Exception Handling (3.8) ---
+    CHECK { SPILL "err"; } !! ERROR: CHECK without HANDLE or CLEAN
+    CHECK SERVE "hi";      !! ERROR: Missing { } block for CHECK
+    HANDLE err { }         !! ERROR: Missing ( ) around HANDLE id
+    CHECK { } HANDLE (e) SERVE "x"; !! ERROR: Missing { } block for HANDLE
+    SPILL "error"          !! ERROR: Missing ; after SPILL
+    SPILL ;                !! ERROR: Missing expression after SPILL
+
+    !! --- 7. Functions (3.9) ---
+    TASK doSomething() { } !! ERROR: Missing return type (e.g., EMPTY)
+    TASK PRICE (PRICE x) { } !! ERROR: Missing function name (ID)
+    TASK EMPTY test PRICE x { } !! ERROR: Missing ( ) around param list
+    TASK EMPTY test(PRICE x) SERVE x; !! ERROR: Missing { } block for TASK body
+    TASK EMPTY test2(x) { } !! ERROR: Missing type before param 'x'
+    YIELD                  !! ERROR: Missing ; after empty YIELD
+    YIELD 10               !! ERROR: Missing ; after value YIELD
+
+    !! --- 8. Expressions (3.10) ---
+    PRICE a = (5 + 3;      !! ERROR: Missing closing ) in grouped expression
+    PRICE b = scores[0     !! ERROR: Missing closing ] in array access
+    PRICE c = 10 + ;       !! ERROR: Binary operator missing right operand
+    PRICE d = *5;          !! ERROR: Expression starting with invalid token (*)
+    computeAverage(sum 5); !! ERROR: Missing , between function arguments
+    result = calc(sum, 5   !! ERROR: Missing ) closing a function call
+
+ORDER_END
+
+!! ERROR: Missing eof (3.1) - testing tokens after end
+SERVE "Bad code";

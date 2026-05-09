@@ -72,7 +72,8 @@ public class Parser {
         this.reporter = reporter;
         this.symTable = symTable;
     }
-     //Keeps asking the scanner for the next token until it gets a valid one.
+    
+    //Keeps asking the scanner for the next token until it gets a valid one.
     private Token fetchNextToken() {
         while (true) {
             try {
@@ -84,9 +85,8 @@ public class Parser {
                         symTable.declareVariable(t.lexeme, "Pending Phase 4");
                     }
                 }
-                
-                return t;
-            } catch (LexicalException le) {
+                return t;   //returns the token
+            } catch (LexicalException le) {     //if lexical error does not give the token
                 reporter.reportLexicalError(le.line, le.col, le.getMessage(), le.lexeme);
                 // Print Lexical Error inline
                 System.out.print("<ERROR " + reporter.getErrorCount() + ": " + le.lexeme + "> ");
@@ -95,22 +95,22 @@ public class Parser {
             }
         }
     }
-      //Is the main LL(1) parsing loop. It works like a stack machine
-    public void parse() throws Exception {
+
+    //Is the main LL(1) parsing loop. It works like a stack
+    public Tree parse() throws Exception {
         Stack<Tree> stack = new Stack<>();
         Tree root = new Tree("PROGRAM"); 
-         // Push in reverse order: eof goes on first (bottom), PROGRAM on top
-        stack.push(root);            
+        stack.push(root);            // Pushes the root
 
         System.out.println("\nStarting Syntax Analysis...\n");
         Token currentToken = fetchNextToken();
 
         // Setup the trace log and step counter
         int step = 1;
-        List<String> parseTrace = new ArrayList<>();
+        List<String> parseTrace = new ArrayList<>();    // A Trace Table used for checking the parsing step by step via the terminal 
 
         while (!stack.isEmpty()) {
-            Tree topNode = stack.peek(); 
+            Tree topNode = stack.peek();                // Checks the top of the stack
             String topSymbol = topNode.data;
 
             // Capture current state for the Trace Table
@@ -121,21 +121,22 @@ public class Parser {
             }
             String actionStr = "";
 
-            if (topSymbol.equals("ε")) {
+            if (topSymbol.equals("ε")) {    //Pop empty
                 actionStr = "Pop ε";
                 stack.pop();
                 parseTrace.add(String.format("%-4d | %-70s | %-15s | %s", step++, truncate(currentStackStr, 70), inputStr, actionStr));
                 continue; 
             }
 
-            String tokenSymbol = normalizeToken(currentToken.tokenName);
+            String tokenSymbol = normalizeToken(currentToken.tokenName);    //normalizeToken removes [<>] from the tokens received
 
+            // Top of the stack is a Terminal
             if (table.isTerminal(topSymbol)) {
-                if (topSymbol.equals(tokenSymbol)) {
+                if (topSymbol.equals(tokenSymbol)) {        // Match terminal
                     actionStr = "Match '" + currentToken.lexeme + "'"; 
                     stack.pop(); 
                     
-                    printOnce(currentToken, false, 0);
+                    printOnce(currentToken, false, 0); 
                     topNode.data = topSymbol + " (" + currentToken.lexeme + ")";
                     
                     if (!tokenSymbol.equals("eof")) {
@@ -204,6 +205,11 @@ public class Parser {
         Tree ast = toAST(root);
         if (ast == null) ast = new Tree("PROGRAM"); 
 
+
+        System.out.println("Abstract Syntax Tree built successfully.\n");
+        new TreeScrollFrame(ast);
+        return ast;
+        /*
         // ONLY draw the AST window if there are absolutely no errors!
         if (!reporter.hasErrors()) {
             System.out.println("Abstract Syntax Tree built successfully.\n");
@@ -211,6 +217,7 @@ public class Parser {
         } else {
             System.out.println("[!] Syntax or Lexical errors detected. AST visualization skipped.\n");
         }
+        */
     }
       // Recursively converts the concrete parse tree into an AST by removing all the passthrough nodes defined in PASSTHROUGH_NODES.
     private Tree toAST(Tree node) {

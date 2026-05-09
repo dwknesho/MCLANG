@@ -1,0 +1,25 @@
+ORDER_START
+ 
+    PRICE value = 100;       !! global 'value'
+    SERVE "Global value: ";
+    SERVE value;             !! prints 100
+ 
+    WANT (FRESH) {
+        PRICE value = 250;   !! local 'value' shadows the global
+        SERVE "Inner value: ";
+        SERVE value;         !! prints 250
+ 
+        WANT (FRESH) {
+            PRICE value = 999;  !! deeper shadow
+            SERVE "Deepest value: ";
+            SERVE value;        !! prints 999
+        }
+ 
+        SERVE "Back to inner: ";
+        SERVE value;         !! prints 250 again
+    }
+ 
+    SERVE "Back to global: ";
+    SERVE value;             !! prints 100 again
+ 
+ORDER_END

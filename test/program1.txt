@@ -49,9 +49,9 @@ ORDER_START
     !! Display results
     SERVE "Student: ";
     SERVE studentName;
-    SERVE "Average Score: ";
+    SERVE "\nAverage Score: ";
     SERVE average;
-    SERVE "Letter Grade: ";
+    SERVE "\nLetter Grade: ";
     SERVE grade;
 
     !! Check if passed

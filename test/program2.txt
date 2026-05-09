@@ -12,7 +12,7 @@ string concatenation, increment/decrement, and boolean expressions *!
     QUALITY running = FRESH;
     QUALITY hasDiscount = EXPIRED;
 
-    SERVE "=== McLang Shopping Cart ===";
+    SERVE "\n=== McLang Shopping Cart ===\n\n";
 
     !! keep adding items until user enters 0
     REFILL (running == FRESH) {
@@ -27,18 +27,18 @@ string concatenation, increment/decrement, and boolean expressions *!
             MENU (itemCode) {
                 FOOD 1 :
                     unitPrice = 120;
-                    SERVE "Burger added.";
+                    SERVE " > Burger selected.\n";
                     DONE;
                 FOOD 2 :
                     unitPrice = 60;
-                    SERVE "Fries added.";
+                    SERVE " > Fries selected.\n";
                     DONE;
                 FOOD 3 :
                     unitPrice = 45;
-                    SERVE "Drink added.";
+                    SERVE " > Drink selected.\n";
                     DONE;
                 SOLDOUT :
-                    SERVE "Invalid item code. Please try again.";
+                    SERVE " > Invalid item code. Please try again.\n\n";
                     unitPrice = 0;
             }
 
@@ -54,10 +54,13 @@ string concatenation, increment/decrement, and boolean expressions *!
                     subtotal = unitPrice * quantity;
                     total += subtotal;
                     itemCount++;
-                    SERVE "Subtotal: ";
+                    
+                    SERVE " > Subtotal for this item: ";
                     SERVE subtotal;
+                    SERVE "\n\n"; !! Adds a clean break before the menu loops again
+                    
                 } HANDLE (err) {
-                    SERVE "Invalid quantity entered. Item skipped.";
+                    SERVE " > Invalid quantity entered. Item skipped.\n\n";
                 }
             }
         }
@@ -67,13 +70,17 @@ string concatenation, increment/decrement, and boolean expressions *!
     hasDiscount = total >= 500 && itemCount >= 3;
     WANT (hasDiscount == FRESH) {
         total -= 50;
-        SERVE "Discount of 50 applied!";
+        SERVE "\n*** Discount of 50 applied! ***\n";
     }
 
-    SERVE "Order Summary";
+    !! Print formatted receipt
+    SERVE "\n========================\n";
+    SERVE "     Order Summary      \n";
+    SERVE "========================\n";
     SERVE "Items ordered: ";
     SERVE itemCount;
-    SERVE "Total amount: ";
+    SERVE "\nTotal amount:  ";
     SERVE total;
+    SERVE "\n========================\n\n";
 
 ORDER_END
