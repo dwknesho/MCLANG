@@ -37,7 +37,7 @@ public class Interpreter {
 
     // Called by Tester after a successful parse.
     public void execute(Tree ast) {
-        System.out.println("\n--- MCLANG INTERPRETER OUTPUT ---");
+        System.out.println("\n--- MCLANG INTERPRETER OUTPUT ---\n\n");
         try {
             if (ast.data.equals("PROGRAM") && !ast.children.isEmpty()) {
                 executeStatementList((Tree) ast.children.get(0));
@@ -45,7 +45,7 @@ public class Interpreter {
         } catch (RuntimeException e) {
             System.err.println("\n[RUNTIME EXCEPTION] " + e.getMessage());
         }
-        System.out.println("---------------------------------");
+        System.out.println("\n\n---------------------------------");
     }
 
     public boolean hasFunction(String name) {
