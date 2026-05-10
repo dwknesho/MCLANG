@@ -3,8 +3,9 @@ package interpreter;
 import errors.ErrorReporter;
 import errors.InterpreterExceptions;
 import grtree.Tree;
+import runtime.SymbolTable;
+
 import java.util.Scanner;
-import semantic.SymbolTable;
 
 public class Interpreter {
     private final SymbolTable         symTable;

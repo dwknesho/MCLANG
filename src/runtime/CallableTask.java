@@ -1,16 +1,16 @@
-package semantic;
+package runtime;
 
 import grtree.Tree;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MCLangFunction {
+public class CallableTask {
     public String returnType; // "PRICE", "RECIPE", "QUALITY", "EMPTY"
     public String name;
     public List<Parameter> parameters;
     public Tree bodyNode; // The <BLOCK> tree node to execute when called
 
-    public MCLangFunction(String returnType, String name, Tree bodyNode) {
+    public CallableTask(String returnType, String name, Tree bodyNode) {
         this.returnType = returnType;
         this.name = name;
         this.bodyNode = bodyNode;

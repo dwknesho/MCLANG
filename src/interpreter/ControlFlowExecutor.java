@@ -2,7 +2,7 @@ package interpreter;
 
 import errors.InterpreterExceptions;
 import grtree.Tree;
-import semantic.SymbolTable;
+import runtime.SymbolTable;
 
 
 //Executes conditional and exception-handling statements
@@ -24,7 +24,6 @@ public class ControlFlowExecutor {
     }
 
     // WANT / SIDE / ONLY (if / elseif / else)
-
     public void executeIf(Tree node) {
         symTable.enterScope();
         try {
@@ -66,7 +65,6 @@ public class ControlFlowExecutor {
     }
 
     // MENU / FOOD / SOLDOUT (switch / case / default)
-
     public void executeSwitch(Tree node) {
         symTable.enterScope();
         try {
@@ -105,7 +103,6 @@ public class ControlFlowExecutor {
     }
 
     // CHECK / HANDLE / CLEAN  (try / catch / finally)
-
     public void executeTryCatch(Tree node) {
         Tree checkBlock   = (Tree) node.children.get(1);
         String errorVar   = extractLexeme(((Tree) node.children.get(3)).data);
@@ -145,7 +142,6 @@ public class ControlFlowExecutor {
     }
 
     // SPILL (throw)
-
     public void executeThrow(Tree node) {
         throw new InterpreterExceptions.SpillException(evaluator.evaluate((Tree) node.children.get(1)));
     }
@@ -161,7 +157,6 @@ public class ControlFlowExecutor {
     }
 
     // Helpers
-
     private String rawLabel(String data) {
         int idx = data.indexOf(" (");
         return idx >= 0 ? data.substring(0, idx).trim() : data.trim();

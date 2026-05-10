@@ -2,8 +2,9 @@ package interpreter;
 
 import errors.InterpreterExceptions;
 import grtree.Tree;
+import runtime.SymbolTable;
+
 import java.util.Scanner;
-import semantic.SymbolTable;
 
 //Executes imperative statements
 public class StatementExecutor {
@@ -25,7 +26,6 @@ public class StatementExecutor {
     }
 
     // Declaration
-
     public void executeDeclaration(Tree node) {
         String mclangType = mapDataType(rawLabel(((Tree) ((Tree) node.children.get(0)).children.get(0)).data));
         String varName    = extractLexeme(((Tree) node.children.get(1)).data);
@@ -48,7 +48,6 @@ public class StatementExecutor {
     }
 
     // Assignment
-
     public void executeAssignment(String varName, Tree stmtPrime) {
         boolean isArray   = false;
         int     index     = -1;
@@ -123,7 +122,6 @@ public class StatementExecutor {
     }
 
     // IO  (ORDER / SERVE)
-
     public void executeIO(Tree node) {
         String ioType = rawLabel(((Tree) node.children.get(0)).data);
 
@@ -171,7 +169,6 @@ public class StatementExecutor {
     }
 
     // Loops  (REFILL / PREP / STIR) 
-
     public void executeLoop(Tree node) {
         Tree   actualLoop = (Tree) node.children.get(0);
         String loopType   = rawLabel(actualLoop.data);
@@ -227,7 +224,6 @@ public class StatementExecutor {
     }
 
     private void executeFor(Tree node) {
-        // Initialiser
         Tree initNode  = (Tree) node.children.get(1);
         Tree initChild = (Tree) initNode.children.get(0);
         if (rawLabel(initChild.data).equals("DECLARATION_STMT")) {
@@ -319,7 +315,6 @@ public class StatementExecutor {
     }
 
     // Shared helpers
-
     private Object getArrayValue(String name, int index) {
         SymbolTable.VariableAttributes attr = symTable.getAttributes(name);
         if (attr == null || !attr.isArray) {

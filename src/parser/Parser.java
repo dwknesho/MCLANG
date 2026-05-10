@@ -2,7 +2,7 @@ package parser;
 
 import lexer.Scanner; 
 import lexer.Token;
-import semantic.SymbolTable;
+import runtime.SymbolTable;
 import errors.LexicalException;
 import errors.ErrorReporter;
 import grtree.Tree;

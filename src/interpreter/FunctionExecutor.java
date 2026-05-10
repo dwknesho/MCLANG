@@ -2,18 +2,19 @@ package interpreter;
 
 import errors.InterpreterExceptions;
 import grtree.Tree;
+import runtime.CallableTask;
+import runtime.SymbolTable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import semantic.MCLangFunction;
-import semantic.SymbolTable;
 
 // Handles TASK (function) declarations, parameter binding, and call execution.
 
 public class FunctionExecutor {
     private final SymbolTable symTable;
-    private final Map<String, MCLangFunction> functions = new HashMap<>();
+    private final Map<String, CallableTask> functions = new HashMap<>();
     private final ExpressionEvaluator evaluator;
 
     // Set by Interpreter after construction (circular dependency resolution)
@@ -39,12 +40,12 @@ public class FunctionExecutor {
     public void executeFunctionDeclaration(Tree node) {
         String returnType = mapDataType(rawLabel(((Tree) ((Tree) node.children.get(1)).children.get(0)).data));
         String funcName = extractLexeme(((Tree) node.children.get(2)).data);
-        MCLangFunction function = new MCLangFunction(returnType, funcName, (Tree) node.children.get(4));
+        CallableTask function = new CallableTask(returnType, funcName, (Tree) node.children.get(4));
         extractParameters((Tree) node.children.get(3), function);
         functions.put(funcName, function);
     }
 
-    private void extractParameters(Tree paramNode, MCLangFunction function) {
+    private void extractParameters(Tree paramNode, CallableTask function) {
         if (paramNode == null || paramNode.children.isEmpty()
                 || rawLabel(((Tree) paramNode.children.get(0)).data).equals("ε")) return;
 
@@ -62,7 +63,7 @@ public class FunctionExecutor {
     // Call Execution
 
     public Object executeFunctionCall(String functionName, Tree argList) {
-        MCLangFunction func = functions.get(functionName);
+        CallableTask func = functions.get(functionName);
         if (func == null) {
             throw new RuntimeException("Semantic Error: Task '" + functionName + "' is not defined.");
         }
@@ -82,7 +83,7 @@ public class FunctionExecutor {
         try {
             // Bind parameters
             for (int i = 0; i < func.parameters.size(); i++) {
-                MCLangFunction.Parameter p = func.parameters.get(i);
+                CallableTask.Parameter p = func.parameters.get(i);
                 symTable.declareVariable(p.name, p.type);
                 symTable.assignValue(p.name, evaluatedArgs.get(i));
             }

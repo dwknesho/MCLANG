@@ -6,7 +6,7 @@ import interpreter.Interpreter;
 import lexer.Scanner;
 import parser.ParseTable;
 import parser.Parser;
-import semantic.SymbolTable;
+import runtime.SymbolTable;
 
 public class Tester {
     public static void main(String[] args) {
