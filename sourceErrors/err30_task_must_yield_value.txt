@@ -1,0 +1,6 @@
+ORDER_START
+ TASK PRICE getValue(PRICE x) {
+  PRICE y = x + 1;
+ }
+ PRICE result = getValue(5);
+ORDER_END

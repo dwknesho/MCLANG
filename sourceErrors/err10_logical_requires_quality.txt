@@ -1,0 +1,8 @@
+ORDER_START
+ PRICE a = 1;
+ PRICE b = 0;
+ !! ERROR: && requires QUALITY on both sides, not PRICE
+ WANT (a && b) {
+  SERVE "Should not reach here";
+ }
+ORDER_END

@@ -1,0 +1,5 @@
+ORDER_START
+ PRICE age;
+ SERVE "Enter age: "; !!Type a non-numerical character
+ ORDER age;
+ORDER_END

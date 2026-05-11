@@ -29,7 +29,7 @@ public class StatementExecutor {
     public void executeDeclaration(Tree node) {
         String mclangType = mapDataType(rawLabel(((Tree) ((Tree) node.children.get(0)).children.get(0)).data));
         String varName    = extractLexeme(((Tree) node.children.get(1)).data);
-        Tree   declPrime  = (Tree) node.children.get(2);
+        Tree declPrime  = (Tree) node.children.get(2);
         String primeLabel = rawLabel(declPrime.data);
 
         if (primeLabel.equals("VAR_INIT")) {
@@ -294,23 +294,28 @@ public class StatementExecutor {
             double result  = 0;
             switch (exactOp) {
                 case "assign_add": 
-                result = cv + rhs; 
-                break;
+                    result = cv + rhs; 
+                    break;
                 case "assign_min": 
-                result = cv - rhs; 
-                break;
+                    result = cv - rhs; 
+                    break;
                 case "assign_mul": 
-                result = cv * rhs; 
-                break;
+                    result = cv * rhs; 
+                    break;
                 case "assign_div": 
-                result = cv / rhs; 
-                break;
+                    result = cv / rhs; 
+                    break;
                 case "assign_mod": 
-                result = cv % rhs; 
-                break;
+                    result = cv % rhs; 
+                    break;
             }
-            if (isArray) symTable.assignArrayValue(varName, index, result);
-            else         symTable.assignValue(varName, result);
+
+            if (isArray){
+                 symTable.assignArrayValue(varName, index, result);
+            } else {
+                symTable.assignValue(varName, result);
+            }     
+                
         }
     }
 
@@ -326,13 +331,13 @@ public class StatementExecutor {
     public String mapDataType(String tokenType) {
         switch (tokenType) {
             case "num_type":    
-            return "PRICE";
+                return "PRICE";
             case "string_type": 
-            return "RECIPE";
+                return "RECIPE";
             case "bool_type":   
-            return "QUALITY";
+                return "QUALITY";
             default:            
-            return "EMPTY";
+                return "EMPTY";
         }
     }
 

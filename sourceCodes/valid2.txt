@@ -1,0 +1,313 @@
+!!Valid program 2 #2: Functions, Recursion, Void Functions, Boolean-returning function, arrays, for-loop,
+!! while loop, do-while, switch, nested conditionals, exception handling, operators, string operations, scoping.
+
+ORDER_START
+
+    !! Get item name based on code
+    TASK RECIPE getItemName(PRICE code) {
+        WANT (code == 1) {
+            YIELD "Burger Patty";
+        } SIDE (code == 2) {
+            YIELD "Burger Bun";
+        } SIDE (code == 3) {
+            YIELD "Lettuce";
+        } SIDE (code == 4) {
+            YIELD "Cheese Slice";
+        } SIDE (code == 5) {
+            YIELD "Frying Oil";
+        } ONLY {
+            YIELD "Unknown Item";
+        }
+    }
+
+    !! Get reorder threshold per item
+    TASK PRICE getThreshold(PRICE code) {
+        WANT (code == 1) {
+            YIELD 20;
+        } SIDE (code == 2) {
+            YIELD 20;
+        } SIDE (code == 3) {
+            YIELD 15;
+        } SIDE (code == 4) {
+            YIELD 10;
+        } SIDE (code == 5) {
+            YIELD 5;
+        } ONLY {
+            YIELD 0;
+        }
+    }
+
+    !! Check if stock is critically low
+    TASK QUALITY isCritical(PRICE stock, PRICE threshold) {
+        YIELD stock <= threshold && stock > 0;
+    }
+
+    !! Check if item is out of stock
+    TASK QUALITY isOutOfStock(PRICE stock) {
+        YIELD stock <= 0;
+    }
+
+    !! Check if item is valid
+    TASK QUALITY isValidItem(PRICE code) {
+        YIELD code >= 1 && code <= 5;
+    }
+
+    !! Check if restock amount is valid
+    TASK QUALITY isValidRestock(PRICE amount) {
+        YIELD amount > 0 && amount <= 500;
+    }
+
+    !! Compute total inventory value
+    TASK PRICE computeValue(PRICE stock, PRICE price) {
+        YIELD stock * price;
+    }
+
+    !! Print item status
+    TASK EMPTY printItemStatus(RECIPE name, PRICE stock, PRICE threshold) {
+        SERVE "Item: " + name;
+        SERVE "Stock: ";
+        SERVE stock;
+        SERVE "Threshold: ";
+        SERVE threshold;
+        WANT (stock <= 0) {
+            SERVE "Status: OUT OF STOCK";
+        } SIDE (stock <= threshold) {
+            SERVE "Status: CRITICAL - Reorder Now!";
+        } SIDE (stock <= threshold * 2) {
+            SERVE "Status: LOW - Monitor Closely";
+        } ONLY {
+            SERVE "Status: OK";
+        }
+    }
+
+    !! Variable Declarations
+    PRICE stocks[5];
+    PRICE prices[5];
+    PRICE i = 0;
+    PRICE action = 0;
+    PRICE itemCode = 0;
+    PRICE amount = 0;
+    PRICE totalValue = 0;
+    PRICE criticalCount = 0;
+    PRICE outCount = 0;
+    PRICE restockCount = 0;
+    QUALITY running = FRESH;
+    QUALITY allGood = FRESH;
+
+    !! Initialize stocks
+    stocks[0] = 50;
+    stocks[1] = 48;
+    stocks[2] = 12;
+    stocks[3] = 8;
+    stocks[4] = 3;
+
+    !! Initialize prices
+    prices[0] = 25;
+    prices[1] = 10;
+    prices[2] = 5;
+    prices[3] = 15;
+    prices[4] = 80;
+
+    SERVE "McLang Inventory Stock Manager";
+
+    !! Main System Loop
+    REFILL (running == FRESH) {
+
+        SERVE "ACTIONS";
+        SERVE "1 - View All Stock";
+        SERVE "2 - Restock Item";
+        SERVE "3 - Use Stock";
+        SERVE "4 - Check Critical Items";
+        SERVE "5 - View Inventory Value";
+        SERVE "0 - Exit";
+        SERVE "Enter action: ";
+        ORDER action;
+
+        MENU (action) {
+
+            !! View All Stock
+            FOOD 1 :
+                SERVE "====================";
+                SERVE "CURRENT INVENTORY";
+                PREP (i = 0; i < 5; i++) {
+                    printItemStatus(
+                        getItemName(i + 1),
+                        stocks[i],
+                        getThreshold(i + 1)
+                    );
+                    SERVE "--------------------";
+                }
+                DONE;
+
+            !! Restock Item
+            FOOD 2 :
+                SERVE "Enter item code to restock (1-5): ";
+                ORDER itemCode;
+
+                CHECK {
+                    WANT (!isValidItem(itemCode)) {
+                        SPILL "Invalid item code entered.";
+                    }
+
+                    SERVE "Restocking: " + getItemName(itemCode);
+                    SERVE "Current Stock: ";
+                    SERVE stocks[itemCode - 1];
+                    SERVE "Enter restock amount: ";
+                    ORDER amount;
+
+                    WANT (!isValidRestock(amount)) {
+                        SPILL "Restock amount must be between 1 and 500.";
+                    }
+
+                    stocks[itemCode - 1] += amount;
+                    restockCount++;
+
+                    SERVE "New Stock for " + getItemName(itemCode) + ": ";
+                    SERVE stocks[itemCode - 1];
+
+                } HANDLE (err) {
+                    SERVE "Restock failed. Please try again.";
+                } CLEAN {
+                    SERVE "Restock operation complete.";
+                }
+                DONE;
+
+            !! Use Stock
+            FOOD 3 :
+                SERVE "Enter item code to use (1-5): ";
+                ORDER itemCode;
+
+                CHECK {
+                    WANT (!isValidItem(itemCode)) {
+                        SPILL "Invalid item code entered.";
+                    }
+
+                    WANT (isOutOfStock(stocks[itemCode - 1])) {
+                        SPILL "Item is out of stock.";
+                    }
+
+                    SERVE "Using: " + getItemName(itemCode);
+                    SERVE "Current Stock: ";
+                    SERVE stocks[itemCode - 1];
+                    SERVE "Enter amount to use: ";
+                    ORDER amount;
+
+                    WANT (amount <= 0 || amount > stocks[itemCode - 1]) {
+                        SPILL "Invalid amount. Cannot use more than current stock.";
+                    }
+
+                    stocks[itemCode - 1] -= amount;
+
+                    SERVE "Remaining Stock for " + getItemName(itemCode) + ": ";
+                    SERVE stocks[itemCode - 1];
+
+                    !! Warn if stock drops to critical after use
+                    WANT (isCritical(stocks[itemCode - 1], getThreshold(itemCode))) {
+                        SERVE "WARNING: " + getItemName(itemCode) + " is now critically low!";
+                    } SIDE (isOutOfStock(stocks[itemCode - 1])) {
+                        SERVE "ALERT: " + getItemName(itemCode) + " is now out of stock!";
+                    }
+
+                } HANDLE (err) {
+                    SERVE "Stock usage failed. Please try again.";
+                } CLEAN {
+                    SERVE "Stock usage operation complete.";
+                }
+                DONE;
+
+            !! Check Critical Items
+            FOOD 4 :
+                SERVE "CRITICAL ITEMS REPORT";
+                criticalCount = 0;
+                outCount = 0;
+                allGood = FRESH;
+
+                PREP (i = 0; i < 5; i++) {
+                    WANT (isOutOfStock(stocks[i])) {
+                        SERVE "OUT OF STOCK: " + getItemName(i + 1);
+                        outCount++;
+                        allGood = EXPIRED;
+                    } SIDE (isCritical(stocks[i], getThreshold(i + 1))) {
+                        SERVE "CRITICAL: " + getItemName(i + 1);
+                        SERVE "Stock: ";
+                        SERVE stocks[i];
+                        criticalCount++;
+                        allGood = EXPIRED;
+                    }
+                }
+
+                WANT (allGood) {
+                    SERVE "All items are sufficiently stocked!";
+                } ONLY {
+                    SERVE "Items out of stock: ";
+                    SERVE outCount;
+                    SERVE "Items critically low: ";
+                    SERVE criticalCount;
+
+                    !! Suggest restock using do-while confirmation
+                    PRICE confirm = 0;
+                    STIR {
+                        SERVE "Restock critical items now? (1 = Yes, 2 = No): ";
+                        ORDER confirm;
+                        WANT (confirm != 1 && confirm != 2) {
+                            SERVE "Please enter 1 or 2 only.";
+                        }
+                    } REFILL (confirm != 1 && confirm != 2);
+
+                    WANT (confirm == 1) {
+                        PREP (i = 0; i < 5; i++) {
+                            WANT (isCritical(stocks[i], getThreshold(i + 1)) || isOutOfStock(stocks[i])) {
+                                stocks[i] += getThreshold(i + 1) * 3;
+                                restockCount++;
+                                SERVE "Auto-restocked: " + getItemName(i + 1);
+                                SERVE "New Stock: ";
+                                SERVE stocks[i];
+                            }
+                        }
+                    } ONLY {
+                        SERVE "Restock skipped.";
+                    }
+                }
+                DONE;
+
+            !! View Inventory Value
+            FOOD 5 :
+                SERVE "INVENTORY VALUE REPORT";
+                totalValue = 0;
+                PREP (i = 0; i < 5; i++) {
+                    PRICE itemValue = 0;
+                    itemValue = computeValue(stocks[i], prices[i]);
+                    totalValue += itemValue;
+
+                    SERVE getItemName(i + 1) + " Value: ";
+                    SERVE itemValue;
+                }
+                SERVE "Total Inventory Value: ";
+                SERVE totalValue;
+
+                !! Categorize inventory health
+                WANT (totalValue >= 5000 && outCount == 0 && criticalCount == 0) {
+                    SERVE "Inventory Health: EXCELLENT";
+                } SIDE (totalValue >= 2000 && outCount == 0) {
+                    SERVE "Inventory Health: GOOD";
+                } SIDE (totalValue >= 500 || outCount <= 1) {
+                    SERVE "Inventory Health: FAIR";
+                } ONLY {
+                    SERVE "Inventory Health: POOR - Immediate restocking needed!";
+                }
+                DONE;
+
+            !! Exit
+            SOLDOUT :
+                WANT (action == 0) {
+                    SERVE "Total restock operations performed: ";
+                    SERVE restockCount;
+                    SERVE "Exiting McLang Inventory Manager. Goodbye!";
+                    running = EXPIRED;
+                } ONLY {
+                    SERVE "Invalid action. Please enter 0 to 5 only.";
+                }
+        }
+    }
+
+ORDER_EN

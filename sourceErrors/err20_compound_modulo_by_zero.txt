@@ -1,0 +1,5 @@
+ORDER_START
+ PRICE total = 100;
+ PRICE divisor = 0;
+ total %= divisor;
+ORDER_END

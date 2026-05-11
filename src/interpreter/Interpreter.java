@@ -83,6 +83,7 @@ public class Interpreter {
         String stmtType   = rawLabel(actualStmt.data);
 
         switch (stmtType) {
+            //Statement Executor handles this part
             case "DECLARATION_STMT": 
                 stmtExec.executeDeclaration(actualStmt);         
                  break;
@@ -92,6 +93,7 @@ public class Interpreter {
             case "LOOP_STMT":        
                 stmtExec.executeLoop(actualStmt);                
                 break;
+            //Control Flow Executor handles this part
             case "IF_STMT":          
                 ctrlExec.executeIf(actualStmt);                  
                 break;
@@ -107,6 +109,7 @@ public class Interpreter {
             case "RETURN_STMT":      
                 ctrlExec.executeReturn(actualStmt);              
                 break;
+            //Function Executor handles this part
             case "FUNCTION_DECL":    
                 funcExec.executeFunctionDeclaration(actualStmt); 
                 break;
@@ -117,14 +120,14 @@ public class Interpreter {
 
             case "id":
                 String name = extractLexeme(actualStmt.data);
-                if (stmtNode.children.size() == 1) {
+                if (stmtNode.children.size() == 1) {                    // standalone function
                     funcExec.executeFunctionCall(name, null);
                 } else {
                     Tree stmtPrime = (Tree) stmtNode.children.get(1);
-                    if (hasFunction(name) || rawLabel(stmtPrime.data).equals("ARG_LIST")) {
+                    if (hasFunction(name) || rawLabel(stmtPrime.data).equals("ARG_LIST")) {    // parameterized function
                         funcExec.executeFunctionCall(name, stmtPrime);
                     } else {
-                        stmtExec.executeAssignment(name, stmtPrime);
+                        stmtExec.executeAssignment(name, stmtPrime);    // assignment
                     }
                 }
                 break;
@@ -135,12 +138,12 @@ public class Interpreter {
 
     // Helpers 
 
-    private String rawLabel(String data) {
+    private String rawLabel(String data) {     // extracts the command tag
         int idx = data.indexOf(" (");
         return idx >= 0 ? data.substring(0, idx).trim() : data.trim();
     }
 
-    private String extractLexeme(String data) {
+    private String extractLexeme(String data) {     // extracts the lexeme
         int start = data.indexOf("(");
         int end   = data.lastIndexOf(")");
         if (start != -1 && end != -1) {

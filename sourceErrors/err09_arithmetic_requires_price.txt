@@ -1,0 +1,7 @@
+ORDER_START
+ PRICE a = 10;
+ QUALITY flag = FRESH;
+ !! ERROR: cannot multiply PRICE by QUALITY
+ PRICE result = a * flag;
+ SERVE result;
+ORDER_END

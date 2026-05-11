@@ -1,0 +1,4 @@
+ORDER_START
+ PRICE total = 100;
+ total[0] = 50;
+ORDER_END

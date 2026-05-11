@@ -1,0 +1,6 @@
+ORDER_START
+ PRICE k = 0;
+ STIR {
+  k++;
+ } REFILL (k);
+ORDER_END

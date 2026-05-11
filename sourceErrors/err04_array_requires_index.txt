@@ -1,0 +1,6 @@
+ORDER_START
+ PRICE scores[5];
+ scores[0] = 90;
+ !! ERROR: scores is an array, must use scores[i] not scores
+ SERVE scores;
+ORDER_END

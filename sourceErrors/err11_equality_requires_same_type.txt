@@ -1,0 +1,10 @@
+ORDER_START
+ PRICE score = 90;
+ RECIPE label = "ninety";
+ !! ERROR: cannot compare PRICE with RECIPE using ==
+ WANT (score == label) {
+  SERVE "Same";
+ } ONLY {
+  SERVE "Different";
+ }
+ORDER_END

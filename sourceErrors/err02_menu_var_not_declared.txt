@@ -1,0 +1,10 @@
+ORDER_START
+ !! ERROR: mealCode is never declared
+ MENU (mealCode) {
+  FOOD 1 :
+   SERVE "Burger";
+   DONE;
+  SOLDOUT :
+   SERVE "Unknown";
+ }
+ORDER_END

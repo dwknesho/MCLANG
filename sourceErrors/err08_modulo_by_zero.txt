@@ -1,0 +1,7 @@
+ORDER_START
+ PRICE a = 10;
+ PRICE b = 0;
+ !! ERROR: cannot do modulo by zero
+ PRICE result = a % b;
+ SERVE result;
+ORDER_END

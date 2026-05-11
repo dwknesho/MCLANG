@@ -1,0 +1,391 @@
+!! Valid program #1: Functions, Recursion, Void Functions, Boolean-returning function, arrays, for-loop, 
+!! while loop, do-while, switch, nested conditionals, exception handling, operators, string operations, scoping.
+
+ORDER_START
+  
+
+    !!HELPER FUNCTIONS 
+
+    TASK PRICE computeTax(PRICE amount, PRICE taxRate) {
+        YIELD amount * taxRate / 100;
+    }
+
+    TASK PRICE applyDiscount(PRICE amount, PRICE discountPercent) {
+        YIELD amount - (amount * discountPercent / 100);
+    }
+
+    TASK QUALITY qualifiesForDiscount(PRICE itemCount, PRICE total) {
+        YIELD itemCount >= 3 && total > 500;
+    }
+
+    TASK RECIPE getRating(PRICE score) {
+        WANT (score >= 90) {
+            YIELD "Excellent";
+        } SIDE (score >= 75) {
+            YIELD "Good";
+        } SIDE (score >= 60) {
+            YIELD "Fair";
+        } ONLY {
+            YIELD "Poor";
+        }
+    }
+
+    TASK PRICE computeLoyaltyPoints(PRICE total, PRICE level) {
+        WANT (level <= 0 || total <= 0) {
+            YIELD 0;
+        }
+        YIELD (total / 100) + computeLoyaltyPoints(total / 2, level - 1);
+    }
+
+    TASK EMPTY printDivider(RECIPE title) {
+        SERVE "\n--------------------------------------------------\n";
+        SERVE " " + title + "\n";
+        SERVE "--------------------------------------------------\n";
+    }
+
+    TASK EMPTY printItem(PRICE num, RECIPE name, PRICE qty, PRICE price) {
+        SERVE " " + num + ". " + name + "\t x" + qty + "\t P" + (price * qty) + "\n";
+    }
+
+    !! ---- MENU PRICES ----
+    PRICE burgerPrice  = 120;
+    PRICE friesPrice   = 60;
+    PRICE drinkPrice   = 45;
+    PRICE pizzaPrice   = 250;
+    PRICE saladPrice   = 85;
+
+    !! ---- ORDER STORAGE ----
+    PRICE quantities[5];
+    PRICE itemTotals[5];
+    PRICE prices[5];
+
+    !! ---- SESSION VARIABLES ----
+    PRICE i = 0;
+    PRICE itemCount = 0;
+    PRICE orderTotal = 0;
+    PRICE taxAmount = 0;
+    PRICE discountAmount = 0;
+    PRICE finalBill = 0;
+    PRICE loyaltyPoints = 0;
+    PRICE serviceScore = 0;
+    PRICE taxRate = 12;
+    PRICE discountPercent = 10;
+    QUALITY hasDiscount = EXPIRED;
+    QUALITY isVIP = EXPIRED;
+    QUALITY validInput = EXPIRED;
+    RECIPE customerName;
+    RECIPE membershipType;
+    RECIPE paymentMethod;
+    RECIPE serviceRating;
+
+    prices[0] = burgerPrice;
+    prices[1] = friesPrice;
+    prices[2] = drinkPrice;
+    prices[3] = pizzaPrice;
+    prices[4] = saladPrice;
+
+  
+    printDivider("WELCOME TO McLANG RESTAURANT");
+    SERVE " Where every byte is delicious!\n";
+    SERVE " Tax Rate:     12%\n";
+    SERVE " Discount:     10% (3+ items over P500)\n";
+
+    !! ---- CUSTOMER NAME ----
+    printDivider("CUSTOMER INFORMATION");
+    SERVE "Enter your name: ";
+    ORDER customerName;
+
+    !! ---- MEMBERSHIP WITH RETRY LOOP ----
+    validInput = EXPIRED;
+    REFILL (validInput == EXPIRED) {
+        SERVE "Enter membership (VIP / regular): ";
+        ORDER membershipType;
+        WANT (membershipType == "VIP" || membershipType == "regular") {
+            validInput = FRESH;
+        } ONLY {
+            SERVE "Invalid membership type. Please enter 'VIP' or 'regular'.\n";
+        }
+    }
+
+    WANT (membershipType == "VIP") {
+        isVIP = FRESH;
+        SERVE "\nWelcome back, VIP member " + customerName + "!\n";
+        SERVE "You enjoy an extra 5% discount on all orders.\n";
+        discountPercent = 15;
+    } ONLY {
+        SERVE "\nWelcome, " + customerName + "!\n";
+        SERVE "Order 3+ items over P500 to get 10% off.\n";
+    }
+
+   
+    printDivider("TODAY'S MENU");
+    SERVE " 1. Burger\t\tP" + burgerPrice + "\n";
+    SERVE " 2. Fries\t\tP" + friesPrice + "\n";
+    SERVE " 3. Drink\t\tP" + drinkPrice + "\n";
+    SERVE " 4. Pizza\t\tP" + pizzaPrice + "\n";
+    SERVE " 5. Salad\t\tP" + saladPrice + "\n";
+
+
+    printDivider("PLACE YOUR ORDER");
+    SERVE "Enter quantity for each item (0 = skip):\n";
+
+    PREP (i = 0; i < 5; i++) {
+        validInput = EXPIRED;
+
+        REFILL (validInput == EXPIRED) {
+            WANT (i == 0) { SERVE "Burger quantity: "; }
+            SIDE (i == 1) { SERVE "Fries quantity:  "; }
+            SIDE (i == 2) { SERVE "Drink quantity:  "; }
+            SIDE (i == 3) { SERVE "Pizza quantity:  "; }
+            ONLY           { SERVE "Salad quantity:  "; }
+
+            CHECK {
+                ORDER quantities[i];
+
+                WANT (quantities[i] < 0) {
+                    SPILL "Quantity cannot be negative!";
+                }
+
+                !! Valid input — compute subtotal
+                itemTotals[i] = prices[i] * quantities[i];
+                WANT (quantities[i] > 0) {
+                    itemCount++;
+                    orderTotal += itemTotals[i];
+                }
+                validInput = FRESH;
+
+            } HANDLE (err) {
+                SERVE "Invalid input: " + err + "\n";
+                SERVE "Please try again.\n";
+            } CLEAN {
+                WANT (validInput == FRESH) {
+                    SERVE "Item " + (i + 1) + " saved.\n";
+                }
+            }
+        }
+    }
+
+   
+    !!VALIDATE ORDER
+   
+    WANT (orderTotal == 0) {
+        SERVE "\nNo items ordered. Exiting system.\n";
+    } ONLY {
+
+       
+        !!ORDER SUMMARY
+     
+        printDivider("YOUR ORDER SUMMARY");
+
+        PREP (i = 0; i < 5; i++) {
+            WANT (quantities[i] > 0) {
+                WANT (i == 0) { printItem(i + 1, "Burger", quantities[i], prices[i]); }
+                SIDE (i == 1) { printItem(i + 1, "Fries",  quantities[i], prices[i]); }
+                SIDE (i == 2) { printItem(i + 1, "Drink",  quantities[i], prices[i]); }
+                SIDE (i == 3) { printItem(i + 1, "Pizza",  quantities[i], prices[i]); }
+                ONLY           { printItem(i + 1, "Salad",  quantities[i], prices[i]); }
+            }
+        }
+
+       
+        !!COMPUTE BILL
+        
+        printDivider("BILL COMPUTATION");
+        SERVE " Subtotal:     P" + orderTotal + "\n";
+
+        hasDiscount = qualifiesForDiscount(itemCount, orderTotal);
+
+        WANT (hasDiscount || isVIP) {
+            discountAmount = orderTotal * discountPercent / 100;
+            orderTotal = applyDiscount(orderTotal, discountPercent);
+            SERVE " Discount (" + discountPercent + "%): -P" + discountAmount + "\n";
+            SERVE " After Discount: P" + orderTotal + "\n";
+        } ONLY {
+            SERVE " No discount applied.\n";
+            WANT (!hasDiscount) {
+                SERVE " (Order 3+ items over P500 to qualify)\n";
+            }
+        }
+
+        taxAmount = computeTax(orderTotal, taxRate);
+        finalBill = orderTotal + taxAmount;
+
+        SERVE " Tax (" + taxRate + "%):   P" + taxAmount + "\n";
+        SERVE " TOTAL BILL:   P" + finalBill + "\n";
+
+        
+        !!PAYMENT
+    
+        printDivider("PAYMENT");
+        SERVE "Select payment method:\n";
+        SERVE " 1 = Cash\n";
+        SERVE " 2 = Card\n";
+        SERVE " 3 = E-Wallet\n";
+
+        PRICE paymentChoice = 0;
+        validInput = EXPIRED;
+
+        REFILL (validInput == EXPIRED) {
+            SERVE "Choice (1/2/3): ";
+            ORDER paymentChoice;
+            WANT (paymentChoice == 1 || paymentChoice == 2 || paymentChoice == 3) {
+                validInput = FRESH;
+            } ONLY {
+                SERVE "Invalid choice. Please enter 1, 2, or 3.\n";
+            }
+        }
+
+        MENU (paymentChoice) {
+            FOOD 1 :
+                paymentMethod = "Cash";
+                SERVE "\nPaying with Cash.\n";
+
+                PRICE cashGiven = 0;
+                validInput = EXPIRED;
+
+                REFILL (validInput == EXPIRED) {
+                    SERVE "Enter cash amount: ";
+                    CHECK {
+                        ORDER cashGiven;
+                        WANT (cashGiven < finalBill) {
+                            SPILL "Insufficient cash! Bill is P" + finalBill;
+                        }
+                        PRICE change = cashGiven - finalBill;
+                        SERVE "Change: P" + change + "\n";
+                        validInput = FRESH;
+                    } HANDLE (err) {
+                        SERVE "Payment error: " + err + "\n";
+                        SERVE "Please try again.\n";
+                    } CLEAN {
+                        WANT (validInput == FRESH) {
+                            SERVE "Cash transaction processed.\n";
+                        }
+                    }
+                }
+                DONE;
+
+            FOOD 2 :
+                paymentMethod = "Card";
+                SERVE "\nCard payment authorized.\n";
+                SERVE "Processing card...\n";
+                DONE;
+
+            FOOD 3 :
+                paymentMethod = "E-Wallet";
+                SERVE "\nE-Wallet payment authorized.\n";
+                SERVE "Scanning QR code...\n";
+                DONE;
+        }
+
+        
+        !!LOYALTY POINTS
+      
+        printDivider("LOYALTY POINTS");
+
+        PRICE loyaltyLevel = 3;
+        loyaltyPoints = computeLoyaltyPoints(finalBill, loyaltyLevel);
+        SERVE "Points earned this order: " + loyaltyPoints + "\n";
+
+        WANT (isVIP) {
+            loyaltyPoints *= 2;
+            SERVE "VIP bonus! Double points: " + loyaltyPoints + "\n";
+        }
+
+        WANT (loyaltyPoints >= 10) {
+            SERVE "Great! You earned a lot of points today!\n";
+        } SIDE (loyaltyPoints >= 5) {
+            SERVE "Nice! Keep ordering to earn more rewards!\n";
+        } ONLY {
+            SERVE "Keep coming back to earn more points!\n";
+        }
+
+       
+        !!SERVICE RATING 
+     
+        printDivider("RATE OUR SERVICE");
+
+        validInput = EXPIRED;
+        REFILL (validInput == EXPIRED) {
+            SERVE "How was your experience? (0-100): ";
+            ORDER serviceScore;
+            WANT (serviceScore >= 0 && serviceScore <= 100) {
+                validInput = FRESH;
+            } ONLY {
+                SERVE "Invalid rating. Please enter a number between 0 and 100.\n";
+            }
+        }
+
+        serviceRating = getRating(serviceScore);
+        SERVE "Service Rating: " + serviceRating + " (" + serviceScore + "/100)\n";
+
+        WANT (serviceScore >= 90) {
+            SERVE "Thank you for the perfect rating!\n";
+            SERVE "We strive to maintain excellent service!\n";
+        } SIDE (serviceScore >= 75) {
+            SERVE "Thank you! We will keep improving!\n";
+        } SIDE (serviceScore >= 60) {
+            SERVE "Thank you for your feedback.\n";
+            SERVE "We will work on improving your experience.\n";
+        } ONLY {
+            SERVE "We are sorry for the poor experience.\n";
+            SERVE "Please let us know how we can do better.\n";
+        }
+
+        
+        !!ORDER STATISTICS
+       
+        printDivider("ORDER STATISTICS");
+
+        PRICE aboveAvgCount = 0;
+        PRICE belowAvgCount = 0;
+        PRICE avgItemPrice = orderTotal / itemCount;
+        PRICE k = 0;
+
+        REFILL (k < 5) {
+            WANT (quantities[k] > 0) {
+                WANT (prices[k] > avgItemPrice) {
+                    aboveAvgCount++;
+                } ONLY {
+                    belowAvgCount++;
+                }
+            }
+            k++;
+        }
+
+        SERVE "Items ordered:          " + itemCount + "\n";
+        SERVE "Average item price:     P" + avgItemPrice + "\n";
+        SERVE "Items above avg price:  " + aboveAvgCount + "\n";
+        SERVE "Items below avg price:  " + belowAvgCount + "\n";
+
+        !! Local scoping demo
+        WANT (FRESH) {
+            PRICE localRate = 8;
+            PRICE localTax = computeTax(finalBill, localRate);
+            SERVE "Alt tax @ 8%:           P" + localTax + "\n";
+            SERVE "You saved vs alt tax:   P" + (localTax - taxAmount) + "\n";
+        }
+
+       
+        !!FINAL RECEIPT
+        
+        printDivider("OFFICIAL RECEIPT");
+        SERVE " Customer:      " + customerName + "\n";
+        SERVE " Membership:    " + membershipType + "\n";
+        SERVE " Payment:       " + paymentMethod + "\n";
+        SERVE " Items Ordered: " + itemCount + "\n";
+        SERVE " Discount:      " + discountPercent + "%\n";
+        SERVE " Tax:           " + taxRate + "%\n";
+        SERVE " Final Bill:    P" + finalBill + "\n";
+        SERVE " Loyalty Pts:   " + loyaltyPoints + "\n";
+        SERVE " Service:       " + serviceRating + "\n";
+
+        WANT (hasDiscount || isVIP) {
+            SERVE "\n You saved P" + discountAmount + " with your discount!\n";
+        }
+
+        printDivider("THANK YOU FOR DINING WITH US");
+        SERVE " Come back soon, " + customerName + "!\n";
+        SERVE " \"Good food. Good mood. McLang Restaurant.\"\n";
+    }
+
+ORDER_END

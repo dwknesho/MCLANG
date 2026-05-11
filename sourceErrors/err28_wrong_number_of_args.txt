@@ -1,0 +1,6 @@
+ORDER_START
+ TASK PRICE add(PRICE x, PRICE y) {
+  YIELD x + y;
+ }
+ PRICE result = add(5);
+ORDER_END

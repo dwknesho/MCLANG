@@ -1,0 +1,7 @@
+ORDER_START
+ PRICE scores[5];
+ scores[0] = 99;
+ QUALITY flag = FRESH;
+ !! ERROR: flag is QUALITY not PRICE, cannot be used as index
+ SERVE scores[flag];
+ORDER_END

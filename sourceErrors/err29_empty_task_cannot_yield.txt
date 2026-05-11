@@ -1,0 +1,6 @@
+ORDER_START
+ TASK EMPTY greet(RECIPE name) {
+  YIELD "Hello " + name;
+ }
+ greet("Ben");
+ORDER_END

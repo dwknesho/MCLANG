@@ -1,0 +1,7 @@
+ORDER_START
+ PRICE score = 85;
+ !! ERROR: score is PRICE not QUALITY
+ WANT (score) {
+  SERVE "This should not work";
+ }
+ORDER_END

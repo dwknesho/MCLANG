@@ -1,0 +1,8 @@
+ORDER_START
+ PRICE scores[3];
+ scores[0] = 80;
+ scores[1] = 90;
+ scores[2] = 75;
+ !! ERROR: index 5 is out of bounds, array size is 3
+ SERVE scores[5];
+ORDER_END

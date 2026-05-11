@@ -1,0 +1,5 @@
+ORDER_START
+ PRICE scores[5];
+ RECIPE idx = "one";
+ scores[idx] = 10;
+ORDER_END

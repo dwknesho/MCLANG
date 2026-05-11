@@ -1,0 +1,6 @@
+ORDER_START
+ RECIPE name = "McLang";
+ !! ERROR: unary plus requires PRICE, not RECIPE
+ PRICE result = +name;
+ SERVE result;
+ORDER_END

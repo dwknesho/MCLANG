@@ -1,0 +1,7 @@
+ORDER_START
+ PRICE count = 5;
+ !! ERROR: ! operator requires QUALITY, not PRICE
+ WANT (!count) {
+  SERVE "Should not work";
+ }
+ORDER_END

@@ -1,0 +1,4 @@
+ORDER_START
+ RECIPE name = "hello";
+ PRICE scores[name];
+ORDER_END

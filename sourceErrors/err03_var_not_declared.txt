@@ -1,0 +1,4 @@
+ORDER_START
+ !! ERROR: total was never declared
+ SERVE total;
+ORDER_END

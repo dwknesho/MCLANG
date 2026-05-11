@@ -1,0 +1,7 @@
+ORDER_START
+ PRICE a = 100;
+ PRICE b = 0;
+ !! ERROR: cannot divide by zero
+ PRICE result = a / b;
+ SERVE result;
+ORDER_END

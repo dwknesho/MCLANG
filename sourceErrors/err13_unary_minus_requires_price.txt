@@ -1,0 +1,6 @@
+ORDER_START
+ QUALITY flag = FRESH;
+ !! ERROR: unary minus requires PRICE, not QUALITY
+ PRICE result = -flag;
+ SERVE result;
+ORDER_END
